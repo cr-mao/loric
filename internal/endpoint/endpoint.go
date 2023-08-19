@@ -1,34 +1,55 @@
 package endpoint
 
 import (
+	"fmt"
 	"net/url"
+	"strconv"
 )
 
-// NewEndpoint new an Endpoint URL.
-func NewEndpoint(scheme, host string) *url.URL {
-	return &url.URL{Scheme: scheme, Host: host}
+const (
+	secureField = "is_secure"
+)
+
+type Endpoint struct {
+	raw      *url.URL
+	isSecure bool
 }
 
-// ParseEndpoint parses an Endpoint URL.
-func ParseEndpoint(endpoints []string, scheme string) (string, error) {
-	for _, e := range endpoints {
-		u, err := url.Parse(e)
-		if err != nil {
-			return "", err
-		}
-
-		if u.Scheme == scheme {
-			return u.Host, nil
-		}
+func ParseEndpoint(endpoint string) (*Endpoint, error) {
+	raw, err := url.Parse(endpoint)
+	if err != nil {
+		return nil, err
 	}
-	return "", nil
+	return &Endpoint{raw: raw, isSecure: raw.Query().Get(secureField) == "true"}, nil
 }
 
-// Scheme is the scheme of endpoint url.
-// examples: scheme="http",isSecure=true get "https"
-func Scheme(scheme string, isSecure bool) string {
-	if isSecure {
-		return scheme + "s"
+func NewEndpoint(scheme, address string, isSecure bool) *Endpoint {
+	return &Endpoint{
+		raw: &url.URL{
+			Scheme:   scheme,
+			Host:     address,
+			RawQuery: fmt.Sprintf("%s=%s", secureField, strconv.FormatBool(isSecure)),
+		},
+		isSecure: isSecure,
 	}
-	return scheme
+}
+
+func (e *Endpoint) Scheme() string {
+	return e.raw.Scheme
+}
+
+func (e *Endpoint) Target() string {
+	return "direct://" + e.raw.Host
+}
+
+func (e *Endpoint) Address() string {
+	return e.raw.Host
+}
+
+func (e *Endpoint) IsSecure() bool {
+	return e.isSecure
+}
+
+func (e *Endpoint) String() string {
+	return e.raw.String()
 }

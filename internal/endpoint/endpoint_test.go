@@ -1,126 +1,19 @@
-package endpoint
+package endpoint_test
 
 import (
-	"net/url"
-	"reflect"
+	"github.com/cr-mao/lorig/internal/endpoint"
 	"testing"
 )
 
 func TestNewEndpoint(t *testing.T) {
-	type args struct {
-		scheme string
-		host   string
-	}
-	tests := []struct {
-		name string
-		args args
-		want *url.URL
-	}{
-		{
-			name: "https://github.com/cr-mao/lori",
-			args: args{"https", "github.com/cr-mao/lori"},
-			want: &url.URL{Scheme: "https", Host: "github.com/cr-mao/lori"},
-		},
-		{
-			name: "https://crblog.cc/",
-			args: args{"https", "crblog.cc/"},
-			want: &url.URL{Scheme: "https", Host: "crblog.cc/"},
-		},
-		{
-			name: "https://www.google.com/",
-			args: args{"https", "www.google.com/"},
-			want: &url.URL{Scheme: "https", Host: "www.google.com/"},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewEndpoint(tt.args.scheme, tt.args.host); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewEndpoint() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	e := endpoint.NewEndpoint("grpc", "127.0.0.1:8080", false)
 
-func TestParseEndpoint(t *testing.T) {
-	type args struct {
-		endpoints []string
-		scheme    string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		{
-			name:    "lori",
-			args:    args{endpoints: []string{"https://github.com/cr-mao/lori"}, scheme: "https"},
-			want:    "github.com",
-			wantErr: false,
-		},
-		{
-			name:    "test",
-			args:    args{endpoints: []string{"http://crblog.cc/"}, scheme: "https"},
-			want:    "",
-			wantErr: false,
-		},
-		{
-			name:    "localhost:8080",
-			args:    args{endpoints: []string{"grpcs://localhost:8080/"}, scheme: "grpcs"},
-			want:    "localhost:8080",
-			wantErr: false,
-		},
-		{
-			name:    "localhost:8081",
-			args:    args{endpoints: []string{"grpcs://localhost:8080/"}, scheme: "grpc"},
-			want:    "",
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := ParseEndpoint(tt.args.endpoints, tt.args.scheme)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("ParseEndpoint() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("ParseEndpoint() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
+	t.Log(e.String())
 
-func TestSchema(t *testing.T) {
-	tests := []struct {
-		schema string
-		secure bool
-		want   string
-	}{
-		{
-			schema: "http",
-			secure: true,
-			want:   "https",
-		},
-		{
-			schema: "http",
-			secure: false,
-			want:   "http",
-		},
-		{
-			schema: "grpc",
-			secure: true,
-			want:   "grpcs",
-		},
-		{
-			schema: "grpc",
-			secure: false,
-			want:   "grpc",
-		},
+	ee, err := endpoint.ParseEndpoint(e.String())
+	if err != nil {
+		t.Fatal(err)
 	}
-	for _, tt := range tests {
-		if got := Scheme(tt.schema, tt.secure); got != tt.want {
-			t.Errorf("Schema() = %v, want %v", got, tt.want)
-		}
-	}
+
+	t.Log(ee.Address())
 }

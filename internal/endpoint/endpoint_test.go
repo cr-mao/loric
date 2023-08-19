@@ -1,7 +1,7 @@
 package endpoint_test
 
 import (
-	"github.com/cr-mao/lorig/internal/endpoint"
+	"github.com/cr-mao/loric/internal/endpoint"
 	"testing"
 )
 

@@ -7,18 +7,20 @@ Desc: server_test.go
 package grpc_test
 
 import (
+	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/transport/grpc"
 )
 
 import (
-	"context"
 	"testing"
 )
 
 func TestServer(t *testing.T) {
-	t.SkipNow()
-	s := grpc.NewServer(grpc.WithAddress("0.0.0.0:9000"))
-	ctx := context.Background()
-	err := s.Start(ctx)
+	s, err := grpc.NewServer("0.0.0.0:12345")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Info(s.Addr())
+	err = s.Start()
 	t.Log(err)
 }

@@ -3,13 +3,12 @@ package gate
 import (
 	"context"
 	"fmt"
-	"github.com/cr-mao/loric/locate"
 	"sync"
 	"time"
 
 	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/errors"
-	"github.com/cr-mao/loric/internal/link"
+	"github.com/cr-mao/loric/locate"
 	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/packet"
 )
@@ -19,11 +18,12 @@ var (
 )
 
 type proxy struct {
-	gate       *cluster.Gate // 网关
-	nodeSource sync.Map      //  用户在哪台 node
+	gate       *Gate    // 网关
+	nodeSource sync.Map //  用户在哪台 node
+
 }
 
-func newProxy(gate *cluster.Gate) *proxy {
+func newProxy(gate *Gate) *proxy {
 	return &proxy{gate: gate}
 }
 
@@ -51,13 +51,13 @@ func (p *proxy) unbindGate(ctx context.Context, cid, uid int64) error {
 func (p *proxy) trigger(ctx context.Context, event cluster.Event, cid, uid int64) {
 	fmt.Println("trigger", event, time.Now().UnixMilli())
 
-	if err := p.link.Trigger(ctx, &link.TriggerArgs{
-		Event: event,
-		CID:   cid,
-		UID:   uid,
-	}); err != nil {
-		log.Warnf("trigger event failed, gid: %s, cid: %d, uid: %d, event: %v, err: %v", p.gate.opts.id, cid, uid, event, err)
-	}
+	//if err := p.link.Trigger(ctx, &link.TriggerArgs{
+	//	Event: event,
+	//	CID:   cid,
+	//	UID:   uid,
+	//}); err != nil {
+	//	log.Warnf("trigger event failed, gid: %s, cid: %d, uid: %d, event: %v, err: %v", p.gate.opts.id, cid, uid, event, err)
+	//}
 
 }
 
@@ -69,13 +69,15 @@ func (p *proxy) deliver(ctx context.Context, cid, uid int64, data []byte) {
 		return
 	}
 
-	if err = p.link.Deliver(ctx, &link.DeliverArgs{
-		CID:     cid,
-		UID:     uid,
-		Message: message,
-	}); err != nil {
-		log.Errorf("deliver message failed: %v", err)
-	}
+	fmt.Println(message)
+
+	//if err = p.link.Deliver(ctx, &link.DeliverArgs{
+	//	CID:     cid,
+	//	UID:     uid,
+	//	Message: message,
+	//}); err != nil {
+	//	log.Errorf("deliver message failed: %v", err)
+	//}
 }
 
 // 启动监听
@@ -101,11 +103,11 @@ func (p *proxy) watchServiceInstance(ctx context.Context) {
 			default:
 				// exec watch
 			}
-			services, err := watcher.Next()
-			if err != nil {
-				continue
-			}
-			p.nodeDispatcher.ReplaceServices(services...)
+			//services, err := watcher.Next()
+			//if err != nil {
+			//	continue
+			//}
+			//p.nodeDispatcher.ReplaceServices(services...)
 		}
 	}()
 }

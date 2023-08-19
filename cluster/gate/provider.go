@@ -2,15 +2,17 @@ package gate
 
 import (
 	"context"
-
 	"github.com/cr-mao/loric/cluster"
+
 	"github.com/cr-mao/loric/packet"
 	"github.com/cr-mao/loric/session"
 )
 
 type provider struct {
-	gate *cluster.Gate
+	gate *Gate
 }
+
+var _ cluster.GateProvider = (*provider)(nil)
 
 // Bind 绑定用户与网关间的关系
 func (p *provider) Bind(ctx context.Context, cid, uid int64) error {

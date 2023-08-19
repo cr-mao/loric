@@ -9,32 +9,19 @@ import (
 	"github.com/cr-mao/loric/network"
 	"github.com/cr-mao/loric/registry"
 	"github.com/cr-mao/loric/sugar"
-	"github.com/cr-mao/loric/transport/grpc"
-)
-
-const (
-	defaultName    = "gate"          // 默认名称
-	defaultTimeout = 3 * time.Second // 默认超时时间
-)
-
-const (
-	defaultIDKey      = "cluster.gate.id"
-	defaultNameKey    = "cluster.gate.name"
-	defaultTimeoutKey = "cluster.gate.timeout"
 )
 
 type Option func(o *options)
 
 type options struct {
-	id                string              // 实例ID
-	name              string              // 实例名称
-	ctx               context.Context     // 上下文
-	timeout           time.Duration       // RPC调用超时时间
-	server            network.Server      // 网关服务器
-	locator           locate.Locator      // 用户定位器
-	registry          registry.Registry   // 服务注册器
-	grpcServerOptions []grpc.ServerOption // grpcServer 选项
-	rpcAddr           string
+	id          string            // 实例ID
+	name        string            // 实例名称
+	ctx         context.Context   // 上下文
+	server      network.Server    // 网关服务器
+	locator     locate.Locator    // 用户定位器
+	registry    registry.Registry // 服务注册器
+	timeout     time.Duration     // grpc调用超时时间
+	transporter *Transport        // 消息传输器
 }
 
 func defaultOptions() *options {
@@ -42,7 +29,6 @@ func defaultOptions() *options {
 		ctx:     context.Background(),
 		name:    defaultName,
 		timeout: defaultTimeout,
-		rpcAddr: ":0",
 	}
 
 	if id := conf.GetString(defaultIDKey); id != "" {
@@ -52,15 +38,12 @@ func defaultOptions() *options {
 			opts.id = uuid
 		}
 	}
-
 	if name := conf.GetString(defaultNameKey); name != "" {
 		opts.name = name
 	}
-
 	if timeout := conf.GetInt64(defaultTimeoutKey); timeout > 0 {
 		opts.timeout = time.Duration(timeout) * time.Second
 	}
-
 	return opts
 }
 
@@ -99,11 +82,7 @@ func WithRegistry(r registry.Registry) Option {
 	return func(o *options) { o.registry = r }
 }
 
-//  grpc server options
-func WithGrpcServerOptions(grpcOptions ...grpc.ServerOption) Option {
-	return func(o *options) { o.grpcServerOptions = grpcOptions }
-}
-
-func WithRpcAddr(rpcAddr string) Option {
-	return func(o *options) { o.rpcAddr = rpcAddr }
+// 消息传输， gate server,node client
+func WithTransport(t *Transport) Option {
+	return func(o *options) { o.transporter = t }
 }

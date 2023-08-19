@@ -7,13 +7,10 @@ Desc: server.go
 package grpc
 
 import (
-	"context"
 	"net"
-	"net/url"
-	"time"
 
 	"github.com/cr-mao/loric/internal/endpoint"
-	"github.com/cr-mao/loric/internal/host"
+	"github.com/cr-mao/loric/internal/netlib"
 	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/transport"
 	"google.golang.org/grpc"
@@ -21,30 +18,32 @@ import (
 	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
-var _ transport.Endpointer = (*Server)(nil)
+const scheme = "grpc"
+
 var _ transport.Server = (*Server)(nil)
 
 // Server is a gRPC server wrapper.
 type Server struct {
 	*grpc.Server
-	baseCtx   context.Context
-	address   string                        //地址
-	unaryInts []grpc.UnaryServerInterceptor //一次元拦截器
-	grpcOpts  []grpc.ServerOption           //
-	lis       net.Listener
-	timeout   time.Duration
-	health    *health.Server // 健康检测server
-	endpoint  *url.URL       // url
-	err       error
+	listenAddr string                        // 监听地址
+	exposeAddr string                        // 内网地址
+	unaryInts  []grpc.UnaryServerInterceptor //一次元拦截器
+	grpcOpts   []grpc.ServerOption           //
+	health     *health.Server                // 健康检测server
+	endpoint   *endpoint.Endpoint
+	err        error
 }
 
 // NewServer creates a gRPC server by options.
-func NewServer(opts ...ServerOption) *Server {
+func NewServer(addr string, opts ...ServerOption) (*Server, error) {
+	listenAddr, exposeAddr, err := netlib.ParseAddr(addr)
+	if err != nil {
+		return nil, err
+	}
 	srv := &Server{
-		baseCtx: context.Background(),
-		address: ":0",
-		timeout: 2 * time.Second,
-		health:  health.NewServer(),
+		health:     health.NewServer(),
+		listenAddr: listenAddr,
+		exposeAddr: exposeAddr,
 	}
 	for _, o := range opts {
 		o(srv)
@@ -61,76 +60,56 @@ func NewServer(opts ...ServerOption) *Server {
 	if len(srv.grpcOpts) > 0 {
 		grpcOpts = append(grpcOpts, srv.grpcOpts...)
 	}
+
 	srv.Server = grpc.NewServer(grpcOpts...)
 	grpc_health_v1.RegisterHealthServer(srv.Server, srv.health)
-	return srv
+	srv.endpoint = endpoint.NewEndpoint(scheme, exposeAddr, false)
+	return srv, nil
 }
 
 // Endpoint return a real address to registry endpoint.
 // examples:
-//	grpc://127.0.0.1:9000?isSecure=false
-func (s *Server) Endpoint() (*url.URL, error) {
-	if err := s.listenAndEndpoint(); err != nil {
-		return nil, s.err
-	}
-	return s.endpoint, nil
+//	grpc://127.0.0.1:9000,
+func (s *Server) Endpoint() *endpoint.Endpoint {
+	return s.endpoint
+}
+
+// Addr 监听地址
+func (s *Server) Addr() string {
+	return s.listenAddr
+}
+
+// Scheme 协议
+func (s *Server) Scheme() string {
+	return scheme
 }
 
 // Start start the gRPC server.
-func (s *Server) Start(ctx context.Context) error {
-	if err := s.listenAndEndpoint(); err != nil {
-		return s.err
+func (s *Server) Start() error {
+	addr, err := net.ResolveTCPAddr("tcp", s.listenAddr)
+	if err != nil {
+		return err
 	}
-	s.baseCtx = ctx
-	log.Infof("[gRPC] server listening on: %s", s.lis.Addr().String())
+
+	lis, err := net.Listen(addr.Network(), addr.String())
+	if err != nil {
+		return err
+	}
 	//设置serving 状态
 	s.health.Resume()
-	return s.Serve(s.lis)
+	return s.Serve(lis)
 }
 
 // Stop stop the gRPC server.
-func (s *Server) Stop(_ context.Context) error {
+func (s *Server) Stop() error {
 	s.health.Shutdown()
 	s.GracefulStop()
 	log.Info("[gRPC] server stopping")
 	return nil
 }
 
-func (s *Server) listenAndEndpoint() error {
-	if s.lis == nil {
-		lis, err := net.Listen("tcp", s.address)
-		if err != nil {
-			s.err = err
-			return err
-		}
-		s.lis = lis
-	}
-	if s.endpoint == nil {
-		addr, err := host.Extract(s.address, s.lis)
-		if err != nil {
-			s.err = err
-			return err
-		}
-		s.endpoint = endpoint.NewEndpoint(endpoint.Scheme("grpc", false), addr)
-	}
-	return s.err
-}
-
 // ServerOption is gRPC server option.
 type ServerOption func(o *Server)
-
-func WithAddress(address string) ServerOption {
-	return func(o *Server) {
-		o.address = address
-	}
-}
-
-// Listener with server lis
-func WithListener(lis net.Listener) ServerOption {
-	return func(s *Server) {
-		s.lis = lis
-	}
-}
 
 // WithUnaryInterceptor returns a ServerOption that sets the UnaryServerInterceptor for the server.
 func WithUnaryInterceptor(in ...grpc.UnaryServerInterceptor) ServerOption {

@@ -4,6 +4,7 @@ import (
 	"google.golang.org/grpc/resolver"
 )
 
+// 直连模式:  direct://127.0.0.1:8011
 const scheme = "direct"
 
 type Builder struct {

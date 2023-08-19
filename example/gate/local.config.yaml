@@ -15,11 +15,16 @@ app:
   pprof:
     addr: "0.0.0.0:13999"
 
-cluster:
-  gate:
-    # 必须是数字
-    id: 1
-    name: "gate_name1"
+gate:
+  # 必须是数字
+  id: 1
+  name: "gate_name1"
+  timeout: 5
+  grpc:
+      server:
+        addr: 127.0.0.1:13001
+      client:
+        poolSize: 10
 
 db:
   # 数据库配置
@@ -54,7 +59,7 @@ log:
 redis:
   # redis配置
   redis_host: "127.0.0.1"
-  redis_port: "6380"
+  redis_port: "6379"
   redis_password: ""
   # 非cache场景使用，会话等不能清楚
   redis_db: 10
@@ -88,20 +93,14 @@ network:
       # 是否发心跳给客户端 , 建议 网关服关闭， node 服开启
       serverHeatSend: true
       # tcp包 最大长度 1mb
-      maxMsgSize: 1024      
+      maxMsgSize: 1024
     client:
       addr: "127.0.0.1:4001"
       heartbeatInterval: 10
 
-transport:
-  grpc:
-    server:
-      addr: 127.0.0.1:13001
-    client:
-      poolSize: 10
 locate:
   redis:
-    addrs: ["127.0.0.1:6380"]
+    addrs: ["127.0.0.1:6379"]
     db: 15
     maxRetries: 3
     username: ""

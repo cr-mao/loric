@@ -73,7 +73,7 @@ type DeliverArgs struct {
 }
 
 type TriggerArgs struct {
-	Event Event
+	Event int32
 	GID   string
 	CID   int64
 	UID   int64

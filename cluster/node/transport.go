@@ -1,16 +1,11 @@
-/**
-User: cr-mao
-Date: 2023/8/19 09:49
-Email: crmao@qq.com
-Desc: transport.go
-*/
-package gate
+package node
 
 import (
-	"github.com/cr-mao/loric/conf"
-	"github.com/cr-mao/loric/internal/endpoint"
-	mygrpc "github.com/cr-mao/loric/transport/grpc"
 	"github.com/cr-mao/loric/transport/grpc/pb"
+	"sync"
+
+	"github.com/cr-mao/loric/conf"
+	mygrpc "github.com/cr-mao/loric/transport/grpc"
 	"google.golang.org/grpc"
 )
 
@@ -27,8 +22,8 @@ type transOptions struct {
 type TransOptionFunc func(o *transOptions)
 
 type Transport struct {
-	opts *transOptions
-	//once          sync.Once //  ClientBuilder 只用一次
+	opts          *transOptions
+	once          sync.Once //  ClientBuilder 只用一次
 	clientBuilder *mygrpc.ClientBuilder
 }
 
@@ -64,27 +59,28 @@ func NewTransport(opts ...TransOptionFunc) *Transport {
 	for _, opt := range opts {
 		opt(trOpts)
 	}
-	return &Transport{
-		opts:          trOpts,
-		clientBuilder: mygrpc.NewClientBuilder(&trOpts.clientOptions),
-	}
+	return &Transport{opts: trOpts}
 }
 
-func (t *Transport) NewGateServer(provider *provider) (*mygrpc.Server, error) {
+//func (t *Transport) NewGateServer(provider *provider) (*mygrpc.Server, error) {
+//	s, err := mygrpc.NewServer(t.opts.serverOptions.Addr, t.opts.serverOptions.ServerOpts...)
+//	if err != nil {
+//		return nil, err
+//	}
+//	pb.RegisterGateServer(s, &rpcService{
+//		provider: provider,
+//	})
+//	return s, nil
+//}
+
+// NewNodeServer 新建节点服务器
+func (t *Transport) NewNodeServer(provider *provider) (*mygrpc.Server, error) {
 	s, err := mygrpc.NewServer(t.opts.serverOptions.Addr, t.opts.serverOptions.ServerOpts...)
 	if err != nil {
 		return nil, err
 	}
-	pb.RegisterGateServer(s, &rpcService{
+	pb.RegisterNodeServer(s, &rpcService{
 		provider: provider,
 	})
 	return s, nil
-}
-
-func (t *Transport) NewNodeClient(ep *endpoint.Endpoint) (*NodeGrpcClient, error) {
-	cc, err := t.clientBuilder.GetConn(ep.Target())
-	if err != nil {
-		return nil, err
-	}
-	return NewNodeClient(cc), nil
 }

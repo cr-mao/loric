@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/locate"
 	"github.com/cr-mao/loric/log"
 	"github.com/go-redis/redis/v8"
@@ -53,7 +52,7 @@ func NewLocator(opts ...Option) *Locator {
 }
 
 // Get 获取用户定位
-func (l *Locator) Get(ctx context.Context, uid int64, insKind cluster.Kind) (string, error) {
+func (l *Locator) Get(ctx context.Context, uid int64, insKind string) (string, error) {
 	key := fmt.Sprintf(userLocationsKey, uid)
 	// 同一个用户 防止缓存穿透.
 	val, err, _ := l.sfg.Do(key+string(insKind), func() (interface{}, error) {
@@ -72,7 +71,7 @@ func (l *Locator) Get(ctx context.Context, uid int64, insKind cluster.Kind) (str
 }
 
 // Set 设置用户定位
-func (l *Locator) Set(ctx context.Context, uid int64, insKind cluster.Kind, insID string) error {
+func (l *Locator) Set(ctx context.Context, uid int64, insKind string, insID string) error {
 	key := fmt.Sprintf(userLocationsKey, uid)
 	err := l.opts.client.HSet(ctx, key, string(insKind), insID).Err()
 	if err != nil {
@@ -88,7 +87,7 @@ func (l *Locator) Set(ctx context.Context, uid int64, insKind cluster.Kind, insI
 }
 
 // Rem 移除用户定位
-func (l *Locator) Rem(ctx context.Context, uid int64, insKind cluster.Kind, insID string) error {
+func (l *Locator) Rem(ctx context.Context, uid int64, insKind string, insID string) error {
 	oldInsID, err := l.Get(ctx, uid, insKind)
 	if err != nil {
 		return err
@@ -112,7 +111,7 @@ func (l *Locator) Rem(ctx context.Context, uid int64, insKind cluster.Kind, insI
 	return nil
 }
 
-func (l *Locator) publish(ctx context.Context, uid int64, insKind cluster.Kind, insID string, eventType locate.EventType) error {
+func (l *Locator) publish(ctx context.Context, uid int64, insKind string, insID string, eventType locate.EventType) error {
 	msg, err := marshal(&locate.Event{
 		UID:     uid,
 		Type:    eventType,
@@ -123,12 +122,12 @@ func (l *Locator) publish(ctx context.Context, uid int64, insKind cluster.Kind, 
 		return err
 	}
 
-	channel := fmt.Sprintf(channelEventKey, string(insKind))
+	channel := fmt.Sprintf(channelEventKey, insKind)
 
 	return l.opts.client.Publish(ctx, channel, msg).Err()
 }
 
-func (l *Locator) toUniqueKey(insKinds ...cluster.Kind) string {
+func (l *Locator) toUniqueKey(insKinds ...string) string {
 	sort.Slice(insKinds, func(i, j int) bool {
 		return insKinds[i] < insKinds[j]
 	})
@@ -142,7 +141,7 @@ func (l *Locator) toUniqueKey(insKinds ...cluster.Kind) string {
 }
 
 // Watch 监听用户定位变化
-func (l *Locator) Watch(ctx context.Context, insKinds ...cluster.Kind) (locate.Watcher, error) {
+func (l *Locator) Watch(ctx context.Context, insKinds ...string) (locate.Watcher, error) {
 	key := l.toUniqueKey(insKinds...)
 
 	v, ok := l.watchers.Load(key)

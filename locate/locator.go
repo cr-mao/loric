@@ -2,18 +2,17 @@ package locate
 
 import (
 	"context"
-	"github.com/cr-mao/loric/cluster"
 )
 
 type Locator interface {
 	// Get 获取用户定位
-	Get(ctx context.Context, uid int64, insKind cluster.Kind) (string, error)
+	Get(ctx context.Context, uid int64, insKind string) (string, error)
 	// Set 设置用户定位
-	Set(ctx context.Context, uid int64, insKind cluster.Kind, insID string) error
+	Set(ctx context.Context, uid int64, insKind string, insID string) error
 	// Rem 移除用户定位
-	Rem(ctx context.Context, uid int64, insKind cluster.Kind, insID string) error
+	Rem(ctx context.Context, uid int64, insKind string, insID string) error
 	// Watch 监听用户定位变化
-	Watch(ctx context.Context, insKinds ...cluster.Kind) (Watcher, error)
+	Watch(ctx context.Context, insKinds ...string) (Watcher, error)
 }
 
 type Watcher interface {
@@ -31,7 +30,7 @@ type Event struct {
 	// 实例ID
 	InsID string `json:"ins_id"`
 	// 实例类型
-	InsKind cluster.Kind `json:"ins_kind"`
+	InsKind string `json:"ins_kind"`
 }
 
 type EventType int

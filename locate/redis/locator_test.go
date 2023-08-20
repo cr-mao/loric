@@ -3,7 +3,6 @@ package redis_test
 import (
 	"context"
 	"fmt"
-	gate2 "github.com/cr-mao/loric/cluster/gate"
 	"strconv"
 	"testing"
 	"time"
@@ -20,12 +19,12 @@ var locator = redis.NewLocator(
 
 func TestLocator_Set(t *testing.T) {
 	for i := 1; i <= 6; i++ {
-		var kind cluster.Kind
+		var kind string
 
 		if i%2 == 0 {
 			kind = cluster.Node
 		} else {
-			kind = gate2.Gate
+			kind = cluster.Gate
 		}
 
 		err := locator.Set(context.Background(), int64(i), kind, strconv.Itoa(i))
@@ -36,12 +35,12 @@ func TestLocator_Set(t *testing.T) {
 }
 
 func TestLocator_Watch(t *testing.T) {
-	watcher1, err := locator.Watch(context.Background(), gate2.Gate, cluster.Node)
+	watcher1, err := locator.Watch(context.Background(), cluster.Gate, cluster.Node)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	watcher2, err := locator.Watch(context.Background(), gate2.Gate)
+	watcher2, err := locator.Watch(context.Background(), cluster.Gate)
 	if err != nil {
 		t.Fatal(err)
 	}

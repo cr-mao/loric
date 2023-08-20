@@ -6,7 +6,6 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/locate"
 	"github.com/cr-mao/loric/log"
 	"github.com/go-redis/redis/v8"
@@ -78,11 +77,11 @@ type watcherMgr struct {
 	watchers map[int64]*watcher
 }
 
-func newWatcherMgr(ctx context.Context, l *Locator, key string, insKinds ...cluster.Kind) (*watcherMgr, error) {
+func newWatcherMgr(ctx context.Context, l *Locator, key string, insKinds ...string) (*watcherMgr, error) {
 	sub := l.opts.client.Subscribe(ctx)
 	channels := make([]string, 0, len(insKinds))
 	for _, insKind := range insKinds {
-		channels = append(channels, fmt.Sprintf(channelEventKey, string(insKind)))
+		channels = append(channels, fmt.Sprintf(channelEventKey, insKind))
 	}
 
 	err := sub.Subscribe(ctx, channels...)

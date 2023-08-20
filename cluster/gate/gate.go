@@ -111,7 +111,7 @@ func (g *Gate) handleConnect(conn network.Conn) {
 	go func() {
 		select {
 		// todo be from config, from chan
-		case <-time.After(time.Second * 6):
+		case <-time.After(time.Second * 5):
 			if conn.UID() <= 0 {
 				// 6秒 绑定上来，没进行登录操作的 则判定为攻击
 				log.Errorf(" attack remoteip:%s,remoteAddr:%s", conn.RemoteIP(), conn.RemoteAddr())
@@ -163,20 +163,21 @@ func (g *Gate) startRPCServer() {
 
 // 停止RPC服务器
 func (g *Gate) stopRPCServer() {
-	_ = g.rpcServer.Stop()
+	if err := g.rpcServer.Stop(); err != nil {
+		log.Errorf("rpc server stop failed: %v", err)
+	}
 }
 
 // 注册服务实例
 func (g *Gate) registerServiceInstance() {
 	g.instance = &registry.ServiceInstance{
 		ID:       g.opts.id,
-		Name:     string(cluster.Gate),
+		Name:     cluster.Gate,
 		Kind:     cluster.Gate,
 		Alias:    g.opts.name,
 		State:    cluster.Work,
 		Endpoint: g.rpcServer.Endpoint().String(),
 	}
-
 	ctx, cancel := context.WithTimeout(g.ctx, 10*time.Second)
 	err := g.opts.registry.Register(ctx, g.instance)
 	cancel()

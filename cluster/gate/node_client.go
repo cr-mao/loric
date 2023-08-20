@@ -30,7 +30,7 @@ func NewNodeClient(cc *grpc.ClientConn) *NodeGrpcClient {
 // Trigger 触发事件
 func (c *NodeGrpcClient) Trigger(ctx context.Context, args *cluster.TriggerArgs) (miss bool, err error) {
 	_, err = c.client.Trigger(ctx, &pb.TriggerRequest{
-		Event: int32(args.Event),
+		Event: args.Event,
 		GID:   args.GID,
 		CID:   args.CID,
 		UID:   args.UID,

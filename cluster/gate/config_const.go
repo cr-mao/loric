@@ -18,7 +18,7 @@ const (
 )
 
 const (
-	defaultName    = "gate"          //  应用名称
+	defaultName    = "gate_01"       //  应用名称
 	defaultTimeout = 3 * time.Second // 默认超时时间
 
 	defaultGrpcServerAddr     = ":0" //  默认服务器地址

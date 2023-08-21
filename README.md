@@ -23,6 +23,7 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 ### 3.功能
 
 - 网关：tcp协议的网关服务器
+- 节点通信：grpc 
 - 日志：基于zap
 - 服务发现注册：支持etcd,redis
 - 协议：支持protobuf、json
@@ -39,9 +40,9 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 ```
 说明：
 
-1. 使用tcp协议时，为了解决粘包问题，还应在包前面加上包长度len，固定为4字节，默认使用大端序编码
-2. seq表示请求序列号      2字节，常用于请求、响应对的确认。可通过配置文件修改
-3. route表示消息路由     2字节，不同的路由对应不同的业务处理流程。可通过配置文件修改
+1. 使用tcp协议时，为了解决粘包问题，还应在包前面加上包长度len，固定为4字节，使用大端序编码
+2. seq表示请求序列号     4字节，常用于请求、响应对的确认。
+3. route表示消息路由    2字节，不同的路由对应不同的业务处理流程。
 4. message表示消息体，采用json或protobuf编码。
 
 #### 心跳

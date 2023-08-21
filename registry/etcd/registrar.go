@@ -98,6 +98,7 @@ func (r *registrar) deregister(ctx context.Context, ins *registry.ServiceInstanc
 	key := fmt.Sprintf("/%s/%s/%s", r.registry.opts.namespace, ins.Name, ins.ID)
 	_, err = r.kv.Delete(ctx, key)
 
+	//nolint
 	if r.lease != nil {
 		_ = r.lease.Close()
 	}

@@ -9,21 +9,22 @@ import (
 	"github.com/cr-mao/loric/component"
 	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/registry"
+	"github.com/cr-mao/loric/sugar"
 	"github.com/cr-mao/loric/transport/grpc"
 )
 
 type Node struct {
 	component.Base
-	opts   *options
-	ctx    context.Context
-	cancel context.CancelFunc
-	state  int32
-	events *Events
-	//router   *Router
-	//proxy    *Proxy
+	opts      *options
+	ctx       context.Context
+	cancel    context.CancelFunc
+	state     int32
+	events    *Events
+	router    *Router
+	proxy     *Proxy
 	instance  *registry.ServiceInstance
 	rpcServer *grpc.Server
-	//fnChan   chan func()
+	fnChan    chan func()
 }
 
 func NewNode(opts ...Option) *Node {
@@ -33,10 +34,10 @@ func NewNode(opts ...Option) *Node {
 	}
 	n := &Node{}
 	n.opts = o
-	//n.events = newEvents(n)
-	//n.router = newRouter(n)
-	//n.proxy = newProxy(n)
-	//n.fnChan = make(chan func(), 4096)
+	n.events = newEvents(n)
+	n.router = newRouter(n)
+	n.proxy = newProxy(n)
+	n.fnChan = make(chan func(), 4096)
 	n.ctx, n.cancel = context.WithCancel(o.ctx)
 
 	return n
@@ -78,7 +79,7 @@ func (n *Node) Start() {
 
 	n.registerServiceInstance()
 
-	//n.proxy.watch(n.ctx)
+	n.proxy.watch(n.ctx)
 
 	go n.dispatch()
 
@@ -89,9 +90,7 @@ func (n *Node) Start() {
 func (n *Node) Destroy() {
 	n.deregisterServiceInstance()
 	n.stopRPCServer()
-	//n.events.close()
-	//n.router.close()
-	//close(n.fnChan)
+	close(n.fnChan)
 	n.cancel()
 }
 
@@ -102,29 +101,15 @@ func (n *Node) Proxy() *Proxy {
 
 // 分发处理消息
 func (n *Node) dispatch() {
-	//for {
-	//	select {
-	//	case evt, ok := <-n.events.receive():
-	//		if !ok {
-	//			return
-	//		}
-	//		xcall.Call(func() {
-	//			n.events.handle(evt)
-	//		})
-	//	case ctx, ok := <-n.router.receive():
-	//		if !ok {
-	//			return
-	//		}
-	//		xcall.Call(func() {
-	//			n.router.handle(ctx)
-	//		})
-	//	case handle, ok := <-n.fnChan:
-	//		if !ok {
-	//			return
-	//		}
-	//		xcall.Call(handle)
-	//	}
-	//}
+	for {
+		select {
+		case handle, ok := <-n.fnChan:
+			if !ok {
+				return
+			}
+			sugar.SafeGo(handle)
+		}
+	}
 }
 
 // 启动RPC服务器

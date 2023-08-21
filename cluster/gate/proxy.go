@@ -22,7 +22,7 @@ type proxy struct {
 func newProxy(gate *Gate) *proxy {
 	return &proxy{
 		gate: gate,
-		// 先写死策略 todo
+		//todo  先写死策略
 		nodeDispatcher: dispatcher.NewDispatcher(dispatcher.RoundRobin),
 	}
 }

@@ -32,7 +32,6 @@ func (e *rpcService) Trigger(ctx context.Context, req *pb.TriggerRequest) (*pb.T
 			return nil, status.New(codes.Internal, err.Error()).Err()
 		}
 	}
-
 	return &pb.TriggerReply{}, nil
 }
 

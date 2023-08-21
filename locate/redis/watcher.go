@@ -6,9 +6,10 @@ import (
 	"sync"
 	"sync/atomic"
 
+	redisLib "github.com/go-redis/redis/v8"
+
 	"github.com/cr-mao/loric/locate"
 	"github.com/cr-mao/loric/log"
-	"github.com/go-redis/redis/v8"
 )
 
 type watcher struct {
@@ -70,7 +71,7 @@ type watcherMgr struct {
 	cancel  context.CancelFunc
 	locator *Locator
 	key     string
-	sub     *redis.PubSub
+	sub     *redisLib.PubSub
 
 	rw       sync.RWMutex
 	idx      int64
@@ -104,9 +105,9 @@ func newWatcherMgr(ctx context.Context, l *Locator, key string, insKinds ...stri
 			}
 
 			switch v := iface.(type) {
-			case *redis.Subscription:
+			case *redisLib.Subscription:
 				log.Debugf("redis channel subscribe succeeded, %s", v.Channel)
-			case *redis.Message:
+			case *redisLib.Message:
 				event, err := unmarshal([]byte(v.Payload))
 				if err != nil {
 					log.Errorf("invalid payload, %s", v.Payload)

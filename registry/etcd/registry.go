@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/cr-mao/loric/registry"
-	"go.etcd.io/etcd/client/v3"
+	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 var _ registry.Registry = &Registry{}

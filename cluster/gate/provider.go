@@ -2,8 +2,8 @@ package gate
 
 import (
 	"context"
-	"github.com/cr-mao/loric/cluster"
 
+	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/packet"
 	"github.com/cr-mao/loric/session"
 )

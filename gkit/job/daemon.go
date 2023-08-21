@@ -11,11 +11,11 @@ type Daemon struct {
 }
 
 func (job *Daemon) Run(ctx context.Context) error {
-	throttle := time.Tick(job.Rate)
+	throttle := time.NewTicker(job.Rate)
 	handle := RecoverInterceptor(job.Work)
 	for {
 		select {
-		case <-throttle:
+		case <-throttle.C:
 			_ = handle(ctx)
 		}
 	}

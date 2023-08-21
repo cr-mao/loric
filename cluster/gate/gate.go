@@ -110,10 +110,10 @@ func (g *Gate) handleConnect(conn network.Conn) {
 	g.session.AddConn(conn)
 	go func() {
 		select {
-		// todo be from config, from chan
+		//todo be from config, from chan
 		case <-time.After(time.Second * 5):
 			if conn.UID() <= 0 {
-				// 6秒 绑定上来，没进行登录操作的 则判定为攻击
+				// 5秒 绑定上来，没进行登录操作的 则判定为攻击
 				log.Errorf(" attack remoteip:%s,remoteAddr:%s", conn.RemoteIP(), conn.RemoteAddr())
 				err := conn.Close()
 				if err != nil {
@@ -136,7 +136,6 @@ func (g *Gate) handleDisconnect(conn network.Conn) {
 		g.proxy.trigger(ctx, cluster.Disconnect, cid, uid)
 		cancel()
 	}
-
 }
 
 // 处理接收到的消息

@@ -17,7 +17,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var _ cluster.NodeProvider = (*NodeGrpcClient)(nil)
+var _ cluster.NodeClient = (*NodeGrpcClient)(nil)
 
 type NodeGrpcClient struct {
 	client pb.NodeClient

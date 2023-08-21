@@ -2,18 +2,13 @@ package node
 
 import (
 	"context"
-	"github.com/cr-mao/loric/sugar"
 	"time"
 
 	"github.com/cr-mao/loric/conf"
 	"github.com/cr-mao/loric/encoding"
 	"github.com/cr-mao/loric/locate"
 	"github.com/cr-mao/loric/registry"
-)
-
-const (
-	defaultEncryptorKey = "cluster.node.encryptor"
-	defaultDecryptorKey = "cluster.node.decryptor"
+	"github.com/cr-mao/loric/sugar"
 )
 
 type Option func(o *options)

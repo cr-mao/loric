@@ -1,11 +1,12 @@
 package node
 
 import (
-	"github.com/cr-mao/loric/transport/grpc/pb"
 	"sync"
 
 	"github.com/cr-mao/loric/conf"
+	"github.com/cr-mao/loric/internal/endpoint"
 	mygrpc "github.com/cr-mao/loric/transport/grpc"
+	"github.com/cr-mao/loric/transport/grpc/pb"
 	"google.golang.org/grpc"
 )
 
@@ -59,19 +60,12 @@ func NewTransport(opts ...TransOptionFunc) *Transport {
 	for _, opt := range opts {
 		opt(trOpts)
 	}
-	return &Transport{opts: trOpts}
-}
 
-//func (t *Transport) NewGateServer(provider *provider) (*mygrpc.Server, error) {
-//	s, err := mygrpc.NewServer(t.opts.serverOptions.Addr, t.opts.serverOptions.ServerOpts...)
-//	if err != nil {
-//		return nil, err
-//	}
-//	pb.RegisterGateServer(s, &rpcService{
-//		provider: provider,
-//	})
-//	return s, nil
-//}
+	return &Transport{
+		opts:          trOpts,
+		clientBuilder: mygrpc.NewClientBuilder(&trOpts.clientOptions),
+	}
+}
 
 // NewNodeServer 新建节点服务器
 func (t *Transport) NewNodeServer(provider *provider) (*mygrpc.Server, error) {
@@ -83,4 +77,21 @@ func (t *Transport) NewNodeServer(provider *provider) (*mygrpc.Server, error) {
 		provider: provider,
 	})
 	return s, nil
+}
+
+func (t *Transport) NewNodeClient(ep *endpoint.Endpoint) (*NodeGrpcClient, error) {
+	cc, err := t.clientBuilder.GetConn(ep.Target())
+	if err != nil {
+		return nil, err
+	}
+	return NewNodeClient(cc), nil
+}
+
+// NewGateClient 新建网关客户端
+func (t *Transport) NewGateClient(ep *endpoint.Endpoint) (*GateGrpcClient, error) {
+	cc, err := t.clientBuilder.GetConn(ep.Target())
+	if err != nil {
+		return nil, err
+	}
+	return NewGateClient(cc), nil
 }

@@ -3,8 +3,9 @@ package redis
 import (
 	"context"
 
+	redisLib "github.com/go-redis/redis/v8"
+
 	"github.com/cr-mao/loric/conf"
-	"github.com/go-redis/redis/v8"
 )
 
 const (
@@ -48,7 +49,7 @@ type options struct {
 
 	// 客户端
 	// 外部客户端配置，存在外部客户端时，优先使用外部客户端，默认为nil
-	client redis.UniversalClient
+	client redisLib.UniversalClient
 }
 
 func defaultOptions() *options {
@@ -94,6 +95,6 @@ func WithMaxRetries(maxRetries int) Option {
 }
 
 // WithClient 设置外部客户端
-func WithClient(client redis.UniversalClient) Option {
+func WithClient(client redisLib.UniversalClient) Option {
 	return func(o *options) { o.client = client }
 }

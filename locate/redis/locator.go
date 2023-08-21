@@ -4,13 +4,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/cr-mao/loric/locate"
-	"github.com/cr-mao/loric/log"
-	"github.com/go-redis/redis/v8"
-	"golang.org/x/sync/singleflight"
 	"sort"
 	"strings"
 	"sync"
+
+	redisLib "github.com/go-redis/redis/v8"
+	"golang.org/x/sync/singleflight"
+
+	"github.com/cr-mao/loric/locate"
+	"github.com/cr-mao/loric/log"
 )
 
 const (
@@ -35,7 +37,7 @@ func NewLocator(opts ...Option) *Locator {
 	}
 
 	if o.client == nil {
-		o.client = redis.NewUniversalClient(&redis.UniversalOptions{
+		o.client = redisLib.NewUniversalClient(&redisLib.UniversalOptions{
 			Addrs:      o.addrs,
 			DB:         o.db,
 			Username:   o.username,
@@ -55,9 +57,9 @@ func NewLocator(opts ...Option) *Locator {
 func (l *Locator) Get(ctx context.Context, uid int64, insKind string) (string, error) {
 	key := fmt.Sprintf(userLocationsKey, uid)
 	// 同一个用户 防止缓存穿透.
-	val, err, _ := l.sfg.Do(key+string(insKind), func() (interface{}, error) {
-		val, err := l.opts.client.HGet(ctx, key, string(insKind)).Result()
-		if err != nil && err != redis.Nil {
+	val, err, _ := l.sfg.Do(key+insKind, func() (interface{}, error) {
+		val, err := l.opts.client.HGet(ctx, key, insKind).Result()
+		if err != nil && err != redisLib.Nil {
 			return "", err
 		}
 
@@ -73,7 +75,7 @@ func (l *Locator) Get(ctx context.Context, uid int64, insKind string) (string, e
 // Set 设置用户定位
 func (l *Locator) Set(ctx context.Context, uid int64, insKind string, insID string) error {
 	key := fmt.Sprintf(userLocationsKey, uid)
-	err := l.opts.client.HSet(ctx, key, string(insKind), insID).Err()
+	err := l.opts.client.HSet(ctx, key, insKind, insID).Err()
 	if err != nil {
 		return err
 	}
@@ -98,7 +100,7 @@ func (l *Locator) Rem(ctx context.Context, uid int64, insKind string, insID stri
 	}
 
 	key := fmt.Sprintf(userLocationsKey, uid)
-	err = l.opts.client.HDel(ctx, key, string(insKind)).Err()
+	err = l.opts.client.HDel(ctx, key, insKind).Err()
 	if err != nil {
 		return err
 	}
@@ -134,7 +136,7 @@ func (l *Locator) toUniqueKey(insKinds ...string) string {
 
 	keys := make([]string, 0, len(insKinds))
 	for _, insKind := range insKinds {
-		keys = append(keys, string(insKind))
+		keys = append(keys, insKind)
 	}
 
 	return strings.Join(keys, "&")

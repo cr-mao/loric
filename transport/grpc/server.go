@@ -97,13 +97,13 @@ func (s *Server) Start() error {
 	}
 	//设置serving 状态
 	s.health.Resume()
-	return s.Serve(lis)
+	return s.Server.Serve(lis)
 }
 
 // Stop stop the gRPC server.
 func (s *Server) Stop() error {
 	s.health.Shutdown()
-	s.GracefulStop()
+	s.Server.GracefulStop()
 	log.Info("[gRPC] server stopping")
 	return nil
 }

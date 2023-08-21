@@ -42,9 +42,9 @@ func (c *Container) Serve() {
 	c.doSavePID()
 	switch runtime.GOOS {
 	case `windows`:
-		signal.Notify(c.sig, syscall.SIGINT, syscall.SIGKILL, syscall.SIGTERM)
+		signal.Notify(c.sig, syscall.SIGINT, syscall.SIGTERM)
 	default:
-		signal.Notify(c.sig, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGABRT, syscall.SIGKILL, syscall.SIGTERM)
+		signal.Notify(c.sig, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGABRT, syscall.SIGTERM)
 	}
 	sig := <-c.sig
 

@@ -6,8 +6,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/cr-mao/loric/registry"
 	clientv3 "go.etcd.io/etcd/client/v3"
+
+	"github.com/cr-mao/loric/registry"
 )
 
 var _ registry.Registry = &Registry{}

@@ -9,17 +9,18 @@ package gate
 import "time"
 
 const (
-	defaultIDKey      = "gate.id"      // 实例id 配置key
-	defaultNameKey    = "gate.name"    // 应用名称 配置key
-	defaultTimeoutKey = "gate.timeout" // grpc请求超时时间
-
+	defaultIDKey                 = "gate.id"           // 实例id 配置key
+	defaultNameKey               = "gate.name"         // 应用名称 配置key
+	defaultTimeoutKey            = "gate.timeout"      // grpc请求超时时间
+	defaultAuthTimeoutKey        = "gate.auth_timeout" // 连上来，必须在此时间内完成用户认证握手
 	defaultGrpcServerAddrKey     = "gate.grpc.server.addr"
 	defaultGrpcClientPoolSizeKey = "gate.grpc.client.poolSize"
 )
 
 const (
-	defaultName    = "gate_01"       //  应用名称
-	defaultTimeout = 3 * time.Second // 默认超时时间
+	defaultName        = "gate_01"       //  应用名称
+	defaultTimeout     = 3 * time.Second // 默认超时时间
+	defaultAuthTimeout = 5 * time.Second // 连上来，必须在此时间内完成用户认证握手
 
 	defaultGrpcServerAddr     = ":0" //  默认服务器地址
 	defaultGrpcClientPoolSize = 10   // 默认请求node grpc的客户端连接池大小

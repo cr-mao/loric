@@ -2,10 +2,12 @@ package grpc
 
 import (
 	"context"
-	"github.com/cr-mao/loric/log"
+	"runtime/debug"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
-	"runtime/debug"
+
+	"github.com/cr-mao/loric/log"
 )
 
 // 防止panic crash 中间件

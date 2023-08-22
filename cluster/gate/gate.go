@@ -110,8 +110,7 @@ func (g *Gate) handleConnect(conn network.Conn) {
 	g.session.AddConn(conn)
 	go func() {
 		select {
-		//todo be from config, from chan
-		case <-time.After(time.Second * 5):
+		case <-time.After(g.opts.authTimeOut):
 			if conn.UID() <= 0 {
 				// 5秒 绑定上来，没进行登录操作的 则判定为攻击
 				log.Errorf(" attack remoteip:%s,remoteAddr:%s", conn.RemoteIP(), conn.RemoteAddr())
@@ -122,6 +121,8 @@ func (g *Gate) handleConnect(conn network.Conn) {
 			} else {
 				log.Debugf("auth has ,uid: %d", conn.UID())
 			}
+		case <-g.ctx.Done():
+			return
 		}
 	}()
 }
@@ -129,7 +130,6 @@ func (g *Gate) handleConnect(conn network.Conn) {
 // 处理断开连接
 func (g *Gate) handleDisconnect(conn network.Conn) {
 	g.session.RemConn(conn)
-
 	if cid, uid := conn.ID(), conn.UID(); uid != 0 {
 		ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
 		_ = g.proxy.unbindGate(ctx, cid, uid)

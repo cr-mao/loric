@@ -6,6 +6,8 @@ import (
 	"sync/atomic"
 	"time"
 
+	"golang.org/x/sync/errgroup"
+
 	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/internal/dispatcher"
 	"github.com/cr-mao/loric/internal/endpoint"
@@ -14,7 +16,6 @@ import (
 	"github.com/cr-mao/loric/packet"
 	"github.com/cr-mao/loric/registry"
 	"github.com/cr-mao/loric/session"
-	"golang.org/x/sync/errgroup"
 )
 
 type Proxy struct {

@@ -4,10 +4,11 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/cr-mao/loric/transport/grpc/resolver/direct"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"
+
+	"github.com/cr-mao/loric/transport/grpc/resolver/direct"
 )
 
 type ClientBuilder struct {

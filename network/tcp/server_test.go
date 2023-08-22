@@ -28,7 +28,7 @@ func TestServer(t *testing.T) {
 	setLimit()
 	server := tcp.NewServer()
 	server.OnStart(func() {
-		t.Logf("server", server.Addr(), " is started")
+		t.Logf("server  %s is started", server.Addr())
 	})
 	server.OnConnect(func(conn network.Conn) {
 		t.Logf("connection is opened, connection id: %d", conn.ID())

@@ -9,12 +9,13 @@ package node
 import (
 	"context"
 
-	"github.com/cr-mao/loric/cluster"
-	"github.com/cr-mao/loric/transport/grpc/code"
-	"github.com/cr-mao/loric/transport/grpc/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/encoding/gzip"
 	"google.golang.org/grpc/status"
+
+	"github.com/cr-mao/loric/cluster"
+	"github.com/cr-mao/loric/transport/grpc/code"
+	"github.com/cr-mao/loric/transport/grpc/pb"
 )
 
 var _ cluster.NodeClient = (*NodeGrpcClient)(nil)

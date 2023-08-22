@@ -42,7 +42,7 @@ func (p *proxy) bindGate(ctx context.Context, cid, uid int64) error {
 func (p *proxy) unbindGate(ctx context.Context, cid, uid int64) error {
 	err := p.gate.opts.locator.Rem(ctx, uid, cluster.Gate, p.gate.opts.id)
 	if err != nil {
-		log.Errorf("user unbind failed, gid: %d, cid: %d, uid: %d, err: %v", p.gate.opts.id, cid, uid, err)
+		log.Errorf("user unbind failed, gid: %s, cid: %d, uid: %d, err: %v", p.gate.opts.id, cid, uid, err)
 	}
 	return err
 }

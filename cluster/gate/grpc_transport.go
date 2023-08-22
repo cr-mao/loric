@@ -7,11 +7,12 @@ Desc: transport.go
 package gate
 
 import (
+	"google.golang.org/grpc"
+
 	"github.com/cr-mao/loric/conf"
 	"github.com/cr-mao/loric/internal/endpoint"
 	mygrpc "github.com/cr-mao/loric/transport/grpc"
 	"github.com/cr-mao/loric/transport/grpc/pb"
-	"google.golang.org/grpc"
 )
 
 type ServerOptions struct {

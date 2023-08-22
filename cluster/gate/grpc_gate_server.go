@@ -9,12 +9,13 @@ package gate
 import (
 	"context"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"github.com/cr-mao/loric/packet"
 	"github.com/cr-mao/loric/session"
 	"github.com/cr-mao/loric/transport/grpc/code"
 	"github.com/cr-mao/loric/transport/grpc/pb"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 // gate grpc serve 实现

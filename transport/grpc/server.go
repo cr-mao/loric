@@ -9,13 +9,14 @@ package grpc
 import (
 	"net"
 
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
+
 	"github.com/cr-mao/loric/internal/endpoint"
 	"github.com/cr-mao/loric/internal/netlib"
 	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/transport"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
-	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
 const scheme = "grpc"

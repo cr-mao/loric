@@ -1,11 +1,11 @@
 package node
 
 import (
-	"github.com/cr-mao/loric/sugar"
 	"sync"
 
 	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/log"
+	"github.com/cr-mao/loric/sugar"
 )
 
 type EventHandler func(event *Event)

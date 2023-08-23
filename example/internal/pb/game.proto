@@ -1,11 +1,29 @@
 syntax = "proto3";
 
-option go_package = "./proto";
+option go_package = "./pb";
 
 package pb;
 
-message Login {
-  string token = 1; // web拿到的token
+// 路由号枚举
+enum Route {
+  Login = 0; // 登录路由号
+}
+
+message LoginCode {
+  enum Code {
+    Ok = 0; // 校验成功
+    Failed = 1; // 校验失败
+  }
+}
+
+// 登录请求
+message LoginReq {
+  string Token = 1; // token
+}
+
+// 登录响应
+message LoginRes {
+  LoginCode.Code Code = 1; // 返回码
 }
 
 

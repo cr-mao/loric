@@ -2,6 +2,7 @@ package node
 
 import (
 	"context"
+	"github.com/cr-mao/loric/sugar"
 	"sync"
 
 	"github.com/cr-mao/loric/cluster"
@@ -48,6 +49,7 @@ func (r *Router) AddRouteHandler(route int32, stateful bool, handler RouteHandle
 		stateful: stateful,
 		handler:  handler,
 	}
+	log.Debugf("add route route_id: %d ,stateful:%t --> handler: %s", route, stateful, sugar.NameOfFunction(handler))
 }
 
 // CheckRouteStateful 是否为有状态路由

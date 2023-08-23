@@ -200,6 +200,7 @@ func (p *proxy) deliver(ctx context.Context, cid, uid int64, data []byte) {
 		UID:     uid,
 		Message: message,
 	}
+
 	_, err = p.doNodeRPC(ctx, message.Route, uid, func(ctx context.Context, client *NodeGrpcClient) (bool, interface{}, error) {
 		miss, errDelver := client.Deliver(ctx, arguments)
 		return miss, nil, errDelver

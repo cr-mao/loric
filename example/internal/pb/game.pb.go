@@ -4,7 +4,7 @@
 // 	protoc        v3.21.12
 // source: game.proto
 
-package proto
+package pb
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -20,16 +20,103 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Login struct {
+type Route int32
+
+const (
+	Route_Login Route = 0
+)
+
+// Enum value maps for Route.
+var (
+	Route_name = map[int32]string{
+		0: "Login",
+	}
+	Route_value = map[string]int32{
+		"Login": 0,
+	}
+)
+
+func (x Route) Enum() *Route {
+	p := new(Route)
+	*p = x
+	return p
+}
+
+func (x Route) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Route) Descriptor() protoreflect.EnumDescriptor {
+	return file_game_proto_enumTypes[0].Descriptor()
+}
+
+func (Route) Type() protoreflect.EnumType {
+	return &file_game_proto_enumTypes[0]
+}
+
+func (x Route) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Route.Descriptor instead.
+func (Route) EnumDescriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{0}
+}
+
+type LoginCode_Code int32
+
+const (
+	LoginCode_Ok     LoginCode_Code = 0 // 校验成功
+	LoginCode_Failed LoginCode_Code = 1 // 校验失败
+)
+
+// Enum value maps for LoginCode_Code.
+var (
+	LoginCode_Code_name = map[int32]string{
+		0: "Ok",
+		1: "Failed",
+	}
+	LoginCode_Code_value = map[string]int32{
+		"Ok":     0,
+		"Failed": 1,
+	}
+)
+
+func (x LoginCode_Code) Enum() *LoginCode_Code {
+	p := new(LoginCode_Code)
+	*p = x
+	return p
+}
+
+func (x LoginCode_Code) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (LoginCode_Code) Descriptor() protoreflect.EnumDescriptor {
+	return file_game_proto_enumTypes[1].Descriptor()
+}
+
+func (LoginCode_Code) Type() protoreflect.EnumType {
+	return &file_game_proto_enumTypes[1]
+}
+
+func (x LoginCode_Code) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use LoginCode_Code.Descriptor instead.
+func (LoginCode_Code) EnumDescriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{0, 0}
+}
+
+type LoginCode struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
-
-	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"` // web拿到的token
 }
 
-func (x *Login) Reset() {
-	*x = Login{}
+func (x *LoginCode) Reset() {
+	*x = LoginCode{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_game_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -37,13 +124,13 @@ func (x *Login) Reset() {
 	}
 }
 
-func (x *Login) String() string {
+func (x *LoginCode) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Login) ProtoMessage() {}
+func (*LoginCode) ProtoMessage() {}
 
-func (x *Login) ProtoReflect() protoreflect.Message {
+func (x *LoginCode) ProtoReflect() protoreflect.Message {
 	mi := &file_game_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,26 +142,122 @@ func (x *Login) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Login.ProtoReflect.Descriptor instead.
-func (*Login) Descriptor() ([]byte, []int) {
+// Deprecated: Use LoginCode.ProtoReflect.Descriptor instead.
+func (*LoginCode) Descriptor() ([]byte, []int) {
 	return file_game_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Login) GetToken() string {
+// 登录请求
+type LoginReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Token string `protobuf:"bytes,1,opt,name=Token,proto3" json:"Token,omitempty"` // token
+}
+
+func (x *LoginReq) Reset() {
+	*x = LoginReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LoginReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginReq) ProtoMessage() {}
+
+func (x *LoginReq) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginReq.ProtoReflect.Descriptor instead.
+func (*LoginReq) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *LoginReq) GetToken() string {
 	if x != nil {
 		return x.Token
 	}
 	return ""
 }
 
+// 登录响应
+type LoginRes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code LoginCode_Code `protobuf:"varint,1,opt,name=Code,proto3,enum=pb.LoginCode_Code" json:"Code,omitempty"` // 返回码
+}
+
+func (x *LoginRes) Reset() {
+	*x = LoginRes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LoginRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginRes) ProtoMessage() {}
+
+func (x *LoginRes) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginRes.ProtoReflect.Descriptor instead.
+func (*LoginRes) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *LoginRes) GetCode() LoginCode_Code {
+	if x != nil {
+		return x.Code
+	}
+	return LoginCode_Ok
+}
+
 var File_game_proto protoreflect.FileDescriptor
 
 var file_game_proto_rawDesc = []byte{
 	0x0a, 0x0a, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x02, 0x70, 0x62,
-	0x22, 0x1d, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b,
-	0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x42,
-	0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x22, 0x27, 0x0a, 0x09, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x43, 0x6f, 0x64, 0x65, 0x22, 0x1a, 0x0a,
+	0x04, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x06, 0x0a, 0x02, 0x4f, 0x6b, 0x10, 0x00, 0x12, 0x0a, 0x0a,
+	0x06, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x10, 0x01, 0x22, 0x20, 0x0a, 0x08, 0x4c, 0x6f, 0x67,
+	0x69, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x14, 0x0a, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x32, 0x0a, 0x08, 0x4c,
+	0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x26, 0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x12, 0x2e, 0x70, 0x62, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e,
+	0x43, 0x6f, 0x64, 0x65, 0x2e, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x2a,
+	0x12, 0x0a, 0x05, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x12, 0x09, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69,
+	0x6e, 0x10, 0x00, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -89,16 +272,22 @@ func file_game_proto_rawDescGZIP() []byte {
 	return file_game_proto_rawDescData
 }
 
-var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_game_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_game_proto_goTypes = []interface{}{
-	(*Login)(nil), // 0: pb.Login
+	(Route)(0),          // 0: pb.Route
+	(LoginCode_Code)(0), // 1: pb.LoginCode.Code
+	(*LoginCode)(nil),   // 2: pb.LoginCode
+	(*LoginReq)(nil),    // 3: pb.LoginReq
+	(*LoginRes)(nil),    // 4: pb.LoginRes
 }
 var file_game_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: pb.LoginRes.Code:type_name -> pb.LoginCode.Code
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_game_proto_init() }
@@ -108,7 +297,31 @@ func file_game_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_game_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Login); i {
+			switch v := v.(*LoginCode); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_game_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*LoginReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_game_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*LoginRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -125,13 +338,14 @@ func file_game_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_game_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   1,
+			NumEnums:      2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_game_proto_goTypes,
 		DependencyIndexes: file_game_proto_depIdxs,
+		EnumInfos:         file_game_proto_enumTypes,
 		MessageInfos:      file_game_proto_msgTypes,
 	}.Build()
 	File_game_proto = out.File

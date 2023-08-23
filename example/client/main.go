@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/cr-mao/loric/conf"
+	"github.com/cr-mao/loric/encoding/proto"
+	"github.com/cr-mao/loric/example/internal/pb"
 	"github.com/cr-mao/loric/network"
 	"github.com/cr-mao/loric/network/tcp"
 	"github.com/cr-mao/loric/packet"
@@ -48,11 +50,15 @@ func main() {
 		if err != nil {
 			fmt.Println("dial err", err)
 		}
+		logReq := &pb.LoginReq{
+			Token: "cr-mao",
+		}
+		logReqByte, _ := proto.Marshal(logReq)
 
 		msg, _ := packet.Pack(&packet.Message{
 			Seq:    1,
-			Route:  1,
-			Buffer: []byte("hello server~~"),
+			Route:  int32(pb.Route_Login),
+			Buffer: logReqByte,
 		})
 		conn.Push(msg)
 		//time.Sleep(10 * time.Second)

@@ -7,7 +7,6 @@ Desc: main.go
 package main
 
 import (
-	"github.com/cr-mao/loric/example/node/router"
 	"math/rand"
 	"time"
 
@@ -15,6 +14,7 @@ import (
 	"github.com/cr-mao/loric/cluster/node"
 	"github.com/cr-mao/loric/component"
 	"github.com/cr-mao/loric/conf"
+	"github.com/cr-mao/loric/example/node/router"
 	"github.com/cr-mao/loric/locate/redis"
 	"github.com/cr-mao/loric/registry/etcd"
 	"github.com/cr-mao/loric/transport/grpc"

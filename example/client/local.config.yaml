@@ -15,32 +15,6 @@ app:
   pprof:
     addr: "0.0.0.0:13999"
 
-gate:
-  # 必须是数字
-  id: gate_01
-  name: "gate_name1"
-  timeout: 5
-  grpc:
-      server:
-        addr: 127.0.0.1:13002
-      client:
-        poolSize: 10
-
-network:
-  tcp:
-    server:
-      addr: "0.0.0.0:3553"
-      maxConnNum: 30000
-      heartbeatInterval: 10
-      # 建议 网关服false
-      handlerMsgAsync: false
-      # 是否发心跳给客户端 , 建议 网关服关闭
-      serverHeatSend: true
-      # tcp包 最大长度 1mb
-      maxMsgSize: 1024
-      # 每秒最多接收单客户端单包数量
-      oneSecondMaxMsgNum: 30
-
 db:
   # 数据库配置
   db_host: "127.0.0.1"
@@ -69,16 +43,17 @@ log:
   # 是否压缩，压缩日志不方便查看，我们设置为 false（压缩可节省空间）
   compress: false
 
-
-
 redis:
   # redis配置
   redis_host: "127.0.0.1"
-  redis_port: "6379"
+  redis_port: "6380"
   redis_password: ""
   # 非cache场景使用，会话等不能清楚
   redis_db: 10
 packet:
+  byteOrder: "big"
+  seqBytes: 2
+  routeBytes: 2
   bufferBytes: 5000
 # 注册中心
 registry:
@@ -94,12 +69,8 @@ registry:
     # 重试间隔
     retryInterval: 10
 
-
-
-locate:
-  redis:
-    addrs: ["127.0.0.1:6379"]
-    db: 15
-    maxRetries: 3
-    username: ""
-    password: ""
+network:
+  tcp:
+    client:
+      addr: "127.0.0.1:3553"
+      heartbeatInterval: 10

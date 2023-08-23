@@ -1,6 +1,7 @@
 package node
 
 import (
+	"fmt"
 	"google.golang.org/grpc"
 
 	"github.com/cr-mao/loric/conf"
@@ -30,6 +31,7 @@ type Transport struct {
 func defaultTransOptions() *transOptions {
 	opts := &transOptions{}
 	opts.serverOptions.Addr = conf.Get(defaultGrpcServerAddrKey, defaultGrpcServerAddr)
+	fmt.Println(opts.serverOptions.Addr)
 	opts.clientOptions.PoolSize = conf.GetInt(defaultGrpcClientPoolSizeKey, defaultGrpcClientPoolSize)
 	return opts
 }

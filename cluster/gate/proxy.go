@@ -205,7 +205,7 @@ func (p *proxy) deliver(ctx context.Context, cid, uid int64, data []byte) {
 		return miss, nil, errDelver
 	})
 	if err != nil {
-		log.Errorf("unpack data to struct failed: %v", err)
+		log.Errorf("deliver message failed: %v", err)
 		return
 	}
 }

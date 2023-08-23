@@ -108,11 +108,10 @@ func (r *registrar) deregister(ctx context.Context, ins *registry.ServiceInstanc
 
 // 写入KV
 func (r *registrar) put(ctx context.Context, key, value string) (clientv3.LeaseID, error) {
-	res, err := r.lease.Grant(ctx, int64(r.registry.opts.retryInterval.Seconds())+1)
+	res, err := r.lease.Grant(ctx, int64(r.registry.opts.retryInterval.Seconds())+2)
 	if err != nil {
 		return 0, err
 	}
-
 	_, err = r.kv.Put(ctx, key, value, clientv3.WithLease(res.ID))
 	if err != nil {
 		return 0, err

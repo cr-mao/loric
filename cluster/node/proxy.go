@@ -400,12 +400,12 @@ func (l *Proxy) indirectPush(ctx context.Context, args *PushArgs) error {
 		return err
 	}
 	_, err = l.doGateRPC(ctx, args.Target, func(client *GateGrpcClient) (bool, interface{}, error) {
-		miss, err := client.Push(ctx, session.User, args.Target, &packet.Message{
+		miss, pErr := client.Push(ctx, session.User, args.Target, &packet.Message{
 			Seq:    args.Message.Seq,
 			Route:  args.Message.Route,
 			Buffer: buffer,
 		})
-		return miss, nil, err
+		return miss, nil, pErr
 	})
 	return err
 }
@@ -458,16 +458,16 @@ func (p *Proxy) indirectMulticast(ctx context.Context, args *MulticastArgs) (int
 	for _, target := range args.Targets {
 		func(target int64) {
 			eg.Go(func() error {
-				_, err := p.doGateRPC(ctx, target, func(client *GateGrpcClient) (bool, interface{}, error) {
-					miss, err := client.Push(ctx, session.User, target, &packet.Message{
+				_, dErr := p.doGateRPC(ctx, target, func(client *GateGrpcClient) (bool, interface{}, error) {
+					miss, pErr := client.Push(ctx, session.User, target, &packet.Message{
 						Seq:    args.Message.Seq,
 						Route:  args.Message.Route,
 						Buffer: buffer,
 					})
-					return miss, nil, err
+					return miss, nil, pErr
 				})
-				if err != nil {
-					return err
+				if dErr != nil {
+					return dErr
 				}
 
 				atomic.AddInt64(&total, 1)
@@ -495,17 +495,17 @@ func (p *Proxy) Broadcast(ctx context.Context, args *BroadcastArgs) (int64, erro
 	eg, ctx := errgroup.WithContext(ctx)
 	p.gateDispatcher.IterateEndpoint(func(_ string, ep *endpoint.Endpoint) bool {
 		eg.Go(func() error {
-			client, err := p.node.opts.transporter.NewGateClient(ep)
-			if err != nil {
-				return err
+			client, nErr := p.node.opts.transporter.NewGateClient(ep)
+			if nErr != nil {
+				return nErr
 			}
-			n, err := client.Broadcast(ctx, args.Kind, &packet.Message{
+			n, bErr := client.Broadcast(ctx, args.Kind, &packet.Message{
 				Seq:    args.Message.Seq,
 				Route:  args.Message.Route,
 				Buffer: buffer,
 			})
-			if err != nil {
-				return err
+			if bErr != nil {
+				return bErr
 			}
 			atomic.AddInt64(&total, n)
 			return nil

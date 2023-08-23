@@ -70,7 +70,7 @@ func NewServer(addr string, opts ...ServerOption) (*Server, error) {
 
 // Endpoint return a real address to registry endpoint.
 // examples:
-//	grpc://127.0.0.1:9000,
+//	grpc://127.0.0.1:9000?is_secure=false,
 func (s *Server) Endpoint() *endpoint.Endpoint {
 	return s.endpoint
 }

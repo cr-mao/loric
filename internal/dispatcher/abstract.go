@@ -1,6 +1,7 @@
 package dispatcher
 
 import (
+	"math/rand"
 	"sync/atomic"
 
 	"github.com/cr-mao/loric/internal/endpoint"
@@ -29,7 +30,6 @@ func (a *abstract) FindEndpoint(insID ...string) (*endpoint.Endpoint, error) {
 		default:
 			// 默认采用 轮训方式
 			return a.roundRobinDispatch()
-			//return a.randomDispatch()
 		}
 	}
 
@@ -59,11 +59,11 @@ func (a *abstract) directDispatch(insID string) (*endpoint.Endpoint, error) {
 
 // 随机分配
 func (a *abstract) randomDispatch() (*endpoint.Endpoint, error) {
-	// todo fix  map 循环是有问题的
-	for _, sep := range a.endpointMap {
-		return sep.endpoint, nil
+	if len(a.endpointArr) == 0 {
+		return nil, ErrNotFoundEndpoint
 	}
-	return nil, ErrNotFoundEndpoint
+	index := rand.Int() % len(a.endpointArr)
+	return a.endpointArr[index].endpoint, nil
 }
 
 // 轮询分配
@@ -71,9 +71,7 @@ func (a *abstract) roundRobinDispatch() (*endpoint.Endpoint, error) {
 	if len(a.endpointArr) == 0 {
 		return nil, ErrNotFoundEndpoint
 	}
-
 	counter := atomic.AddInt64(&a.counter, 1)
 	index := int(counter % int64(len(a.endpointArr)))
-
 	return a.endpointArr[index].endpoint, nil
 }

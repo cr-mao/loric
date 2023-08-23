@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/cr-mao/loric/cluster"
+	"github.com/cr-mao/loric/errors"
 	"github.com/cr-mao/loric/packet"
 	"github.com/cr-mao/loric/session"
 )
@@ -13,6 +14,7 @@ type provider struct {
 }
 
 var _ cluster.GateProvider = (*provider)(nil)
+var ErrInvalidArgument = errors.New("ErrInvalidArgument")
 
 // Bind 绑定用户与网关间的关系
 func (p *provider) Bind(ctx context.Context, cid, uid int64) error {

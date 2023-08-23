@@ -1,4 +1,6 @@
 vet:
+	go install golang.org/x/tools/go/analysis/passes/shadow/cmd/shadow@latest
+	go vet -vettool=`which shadow` ./...
 	go vet ./...
 
 test:
@@ -22,6 +24,10 @@ install-protoc-gen-go:
 
 install-lint:
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.48.0
+
+
+
+
 
 %:
 	@true

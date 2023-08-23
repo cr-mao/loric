@@ -14,7 +14,7 @@ type provider struct {
 func (p *provider) Trigger(ctx context.Context, args *cluster.TriggerArgs) (bool, error) {
 	switch args.Event {
 	case cluster.Reconnect:
-		// todo 其实这里不会发生。目前gate 投递过来的事件 都是带用户id才投递
+		//  其实这里不会发生。目前gate 投递过来的事件 都是带用户id才投递
 		if args.UID <= 0 {
 			return false, ErrInvalidArgument
 		}

@@ -100,9 +100,9 @@ func Test_Benchmark(t *testing.T) {
 	client.OnReceive(func(conn network.Conn, msg []byte) {
 		atomic.AddInt64(&totalRecv, 1)
 
-		message, err := packet.Unpack(msg)
-		if err != nil {
-			fmt.Println(err)
+		message, uErr := packet.Unpack(msg)
+		if uErr != nil {
+			fmt.Println(uErr)
 		}
 		if message.Seq != 1 {
 			fmt.Println("seq error")
@@ -124,9 +124,9 @@ func Test_Benchmark(t *testing.T) {
 	// 准备连接
 	conns := make([]network.Conn, concurrency)
 	for i := 0; i < concurrency; i++ {
-		conn, err := client.Dial()
-		if err != nil {
-			fmt.Println("connect failed", i, err)
+		conn, dErr := client.Dial()
+		if dErr != nil {
+			fmt.Println("connect failed", i, dErr)
 			i--
 			continue
 		}

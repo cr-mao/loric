@@ -6,12 +6,15 @@ import (
 	"time"
 
 	"github.com/cr-mao/loric/cluster"
+	"github.com/cr-mao/loric/errors"
 	"github.com/cr-mao/loric/internal/dispatcher"
 	"github.com/cr-mao/loric/internal/endpoint"
 	"github.com/cr-mao/loric/locate"
 	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/packet"
 )
+
+var ErrNotFoundUserSource = errors.New("not found user source")
 
 type proxy struct {
 	gate           *Gate    // 网关
@@ -21,8 +24,7 @@ type proxy struct {
 
 func newProxy(gate *Gate) *proxy {
 	return &proxy{
-		gate: gate,
-		//todo  先写死策略
+		gate:           gate,
 		nodeDispatcher: dispatcher.NewDispatcher(dispatcher.RoundRobin),
 	}
 }
@@ -33,7 +35,7 @@ func (p *proxy) bindGate(ctx context.Context, cid, uid int64) error {
 	if err != nil {
 		return err
 	}
-	// 绑定 网关算重连， 登录的时候 ，node过来触发的
+	// 绑定 网关算重连， 登录的时候 ，node auth 后，则触发绑定网关的消息...
 	p.trigger(ctx, cluster.Reconnect, cid, uid)
 	return nil
 }
@@ -60,7 +62,7 @@ func (p *proxy) trigger(ctx context.Context, event int32, cid, uid int64) {
 
 // Trigger 触发事件
 func (p *proxy) trigger2(ctx context.Context, args *cluster.TriggerArgs) error {
-	// 这块应该不会进来，todo 待优化
+	// switch 这块其实都不会走，先留着
 	switch args.Event {
 	// 这里不会走到
 	case cluster.Connect:
@@ -199,14 +201,13 @@ func (p *proxy) deliver(ctx context.Context, cid, uid int64, data []byte) {
 		Message: message,
 	}
 	_, err = p.doNodeRPC(ctx, message.Route, uid, func(ctx context.Context, client *NodeGrpcClient) (bool, interface{}, error) {
-		miss, err := client.Deliver(ctx, arguments)
-		return miss, nil, err
+		miss, errDelver := client.Deliver(ctx, arguments)
+		return miss, nil, errDelver
 	})
 	if err != nil {
 		log.Errorf("unpack data to struct failed: %v", err)
 		return
 	}
-
 }
 
 // 执行节点RPC调用, todo 简化， 这代码不够好阅读

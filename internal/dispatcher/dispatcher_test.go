@@ -5,7 +5,9 @@ import (
 	"github.com/cr-mao/loric/internal/dispatcher"
 	"github.com/cr-mao/loric/internal/endpoint"
 	"github.com/cr-mao/loric/registry"
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestDispatcher_ReplaceServices(t *testing.T) {
@@ -77,4 +79,76 @@ func TestDispatcher_ReplaceServices(t *testing.T) {
 	} else {
 		t.Log(event.FindEndpoint())
 	}
+}
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+//Benchmark_StrangerRoundRobin-8   	  374792	      3064 ns/op
+func Benchmark_StrangerRoundRobin(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var (
+			instance1 = &registry.ServiceInstance{
+				ID:       "xc",
+				Name:     "gate-3",
+				Kind:     cluster.Node,
+				Alias:    "gate-3",
+				State:    cluster.Work,
+				Endpoint: endpoint.NewEndpoint("grpc", "127.0.0.1:8003", false).String(),
+				Routes: []registry.Route{{
+					ID:       2,
+					Stateful: false,
+				}, {
+					ID:       3,
+					Stateful: false,
+				}, {
+					ID:       4,
+					Stateful: true,
+				}},
+			}
+		)
+
+		d := dispatcher.NewDispatcher(dispatcher.RoundRobin)
+
+		d.ReplaceServices(instance1)
+
+		router, _ := d.FindRoute(2)
+		router.FindEndpoint()
+
+	}
+
+}
+
+//Benchmark_StrangerRandom-8   	  388052	      3087 ns/op
+func Benchmark_StrangerRandom(b *testing.B) {
+
+	for i := 0; i < b.N; i++ {
+
+		var (
+			instance1 = &registry.ServiceInstance{
+				ID:       "xc",
+				Name:     "gate-3",
+				Kind:     cluster.Node,
+				Alias:    "gate-3",
+				State:    cluster.Work,
+				Endpoint: endpoint.NewEndpoint("grpc", "127.0.0.1:8003", false).String(),
+				Routes: []registry.Route{{
+					ID:       2,
+					Stateful: false,
+				}, {
+					ID:       3,
+					Stateful: false,
+				}, {
+					ID:       4,
+					Stateful: true,
+				}},
+			}
+		)
+		d := dispatcher.NewDispatcher(dispatcher.Random)
+		d.ReplaceServices(instance1)
+		router, _ := d.FindRoute(2)
+		router.FindEndpoint()
+	}
+
 }

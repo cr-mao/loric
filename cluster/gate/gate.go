@@ -112,14 +112,12 @@ func (g *Gate) handleConnect(conn network.Conn) {
 		select {
 		case <-time.After(g.opts.authTimeOut):
 			if conn.UID() <= 0 {
-				// 5秒 绑定上来，没进行登录操作的 则判定为攻击
+				// 5秒 绑定上来，没进行auth操作的 则判定为攻击
 				log.Errorf(" attack remoteip:%s,remoteAddr:%s", conn.RemoteIP(), conn.RemoteAddr())
 				err := conn.Close()
 				if err != nil {
-					log.Errorf("connect not login err:%v", err)
+					log.Errorf("connect not  auth check err:%v", err)
 				}
-			} else {
-				log.Debugf("auth has ,uid: %d", conn.UID())
 			}
 		case <-g.ctx.Done():
 			return
@@ -132,9 +130,9 @@ func (g *Gate) handleDisconnect(conn network.Conn) {
 	g.session.RemConn(conn)
 	if cid, uid := conn.ID(), conn.UID(); uid != 0 {
 		ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
+		defer cancel()
 		_ = g.proxy.unbindGate(ctx, cid, uid)
 		g.proxy.trigger(ctx, cluster.Disconnect, cid, uid)
-		cancel()
 	}
 }
 
@@ -142,8 +140,8 @@ func (g *Gate) handleDisconnect(conn network.Conn) {
 func (g *Gate) handleReceive(conn network.Conn, data []byte) {
 	cid, uid := conn.ID(), conn.UID()
 	ctx, cancel := context.WithTimeout(g.ctx, g.opts.timeout)
+	defer cancel()
 	g.proxy.deliver(ctx, cid, uid, data)
-	cancel()
 }
 
 // 启动RPC服务器

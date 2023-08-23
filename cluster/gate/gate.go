@@ -112,8 +112,8 @@ func (g *Gate) handleConnect(conn network.Conn) {
 		select {
 		case <-time.After(g.opts.authTimeOut):
 			if conn.UID() <= 0 {
-				// 5秒 绑定上来，没进行auth操作的 则判定为攻击
-				log.Errorf(" attack remoteip:%s,remoteAddr:%s", conn.RemoteIP(), conn.RemoteAddr())
+				// x秒连接上来，没进行auth操作的 则判定为攻击
+				log.Infof(" attack remoteip:%s,remoteAddr:%s", conn.RemoteIP(), conn.RemoteAddr())
 				err := conn.Close()
 				if err != nil {
 					log.Errorf("connect not  auth check err:%v", err)

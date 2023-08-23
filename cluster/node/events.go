@@ -1,6 +1,7 @@
 package node
 
 import (
+	"github.com/cr-mao/loric/sugar"
 	"sync"
 
 	"github.com/cr-mao/loric/cluster"
@@ -38,4 +39,5 @@ func (e *Events) AddEventHandler(event int32, handler EventHandler) {
 		return
 	}
 	e.events[event] = handler
+	log.Debugf("add event %s --> handler: %s", cluster.EventNames[event], sugar.NameOfFunction(handler))
 }

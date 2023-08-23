@@ -49,18 +49,15 @@ func main() {
 			fmt.Println("dial err", err)
 		}
 
-		defer conn.Close()
-
 		msg, _ := packet.Pack(&packet.Message{
 			Seq:    1,
 			Route:  1,
 			Buffer: []byte("hello server~~"),
 		})
 		conn.Push(msg)
-		conn.Push(msg)
-		conn.Push(msg)
-		conn.Push(msg)
-		conn.Push(msg)
+		//time.Sleep(10 * time.Second)
+		conn.Close()
+		//fmt.Println(2222)
 
 	}
 

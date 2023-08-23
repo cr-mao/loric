@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option go_package = "./proto";
+
+package pb;
+
+message Login {
+  string token = 1; // web拿到的token
+}
+
+
+

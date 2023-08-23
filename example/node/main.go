@@ -7,6 +7,10 @@ Desc: main.go
 package main
 
 import (
+	"github.com/cr-mao/loric/example/node/router"
+	"math/rand"
+	"time"
+
 	"github.com/cr-mao/loric"
 	"github.com/cr-mao/loric/cluster/node"
 	"github.com/cr-mao/loric/component"
@@ -14,8 +18,6 @@ import (
 	"github.com/cr-mao/loric/locate/redis"
 	"github.com/cr-mao/loric/registry/etcd"
 	"github.com/cr-mao/loric/transport/grpc"
-	"math/rand"
-	"time"
 )
 
 func main() {
@@ -37,13 +39,17 @@ func main() {
 	rpcServer := node.NewTransport(node.WithServerOptions(
 		serverOpts...,
 	))
-	cluster := node.NewNode(
+	nodeInstance := node.NewNode(
 		node.WithLocator(location),
 		node.WithTransporter(rpcServer),
 		node.WithRegistry(etcd.NewRegistry()),
 	)
+
+	// 注册路由
+	router.NewRouter(nodeInstance.Proxy()).Init()
+
 	// 添加网关组件, pprof分析
-	contanier.Add(cluster, component.NewPProf())
+	contanier.Add(nodeInstance, component.NewPProf())
 	// 启动容器
 	contanier.Serve()
 }

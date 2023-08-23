@@ -32,7 +32,6 @@ type Server struct {
 	grpcOpts   []grpc.ServerOption           //
 	health     *health.Server                // 健康检测server
 	endpoint   *endpoint.Endpoint
-	err        error
 }
 
 // NewServer creates a gRPC server by options.

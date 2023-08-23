@@ -13,7 +13,7 @@ import (
 )
 
 type watcherMgr struct {
-	err              error
+	//err              error
 	ctx              context.Context
 	cancel           context.CancelFunc
 	registry         *Registry

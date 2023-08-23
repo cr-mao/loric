@@ -1,8 +1,6 @@
 package node
 
 import (
-	"sync"
-
 	"google.golang.org/grpc"
 
 	"github.com/cr-mao/loric/conf"
@@ -24,8 +22,8 @@ type transOptions struct {
 type TransOptionFunc func(o *transOptions)
 
 type Transport struct {
-	opts          *transOptions
-	once          sync.Once //  ClientBuilder 只用一次
+	opts *transOptions
+	//once          sync.Once //  ClientBuilder 只用一次
 	clientBuilder *mygrpc.ClientBuilder
 }
 

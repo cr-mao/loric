@@ -9,7 +9,7 @@ run:
 linters:
   disable-all: true
   enable:
-    #- unused
+    - unused
     - ineffassign
     - goimports
     - gofmt
@@ -17,7 +17,7 @@ linters:
     - unparam
     - unconvert
     - govet
-    # - errcheck
+#    - errcheck
     - staticcheck
 
 linters-settings:

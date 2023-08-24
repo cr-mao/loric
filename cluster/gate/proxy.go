@@ -97,6 +97,7 @@ func (p *proxy) trigger2(ctx context.Context, args *cluster.TriggerArgs) error {
 	for i := 0; i < 2; i++ {
 		if nid, err = p.LocateNode(ctx, args.UID); err != nil {
 			if args.Event == cluster.Disconnect && err == ErrNotFoundUserSource {
+				//todo 这个case 好想没用，用户都不知道再哪台机器上....
 				return p.doTrigger(ctx, args)
 			}
 			return err

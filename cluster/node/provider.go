@@ -2,6 +2,7 @@ package node
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cr-mao/loric/cluster"
 )
@@ -29,15 +30,18 @@ func (p *provider) Trigger(ctx context.Context, args *cluster.TriggerArgs) (bool
 		if args.UID > 0 {
 			_, ok, err := p.node.proxy.AskNode(ctx, args.UID, p.node.opts.id)
 			if err != nil {
+				fmt.Println(9239292932)
 				return false, err
 			}
 
 			if !ok {
+				fmt.Println(55555555)
 				return true, ErrNotFoundUserSource
 			}
 		}
 	}
 
+	fmt.Println(3232100000)
 	handler, ok := p.node.events.events[args.Event]
 	if !ok {
 		return false, nil

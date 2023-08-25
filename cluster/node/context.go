@@ -17,6 +17,10 @@ func (c *Context) Context() context.Context {
 	return c.ctx
 }
 
+func (c *Context) GetNodeId() string {
+	return c.Proxy.GetNodeID()
+}
+
 // BindGate 绑定网关
 func (c *Context) BindGate(uid int64) error {
 	return c.Proxy.BindGate(c.ctx, uid, c.Request.GID, c.Request.CID)

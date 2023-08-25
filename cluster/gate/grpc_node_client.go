@@ -44,7 +44,7 @@ func (c *NodeGrpcClient) Trigger(ctx context.Context, args *cluster.TriggerArgs)
 func (c *NodeGrpcClient) Deliver(ctx context.Context, args *cluster.DeliverArgs) (miss bool, err error) {
 	_, err = c.client.Deliver(ctx, &pb.DeliverRequest{
 		GID: args.GID,
-		NID: args.NID,
+		NID: args.NID, //肯定是空
 		CID: args.CID,
 		UID: args.UID,
 		Message: &pb.Message{

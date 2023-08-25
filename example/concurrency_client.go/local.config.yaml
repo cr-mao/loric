@@ -15,18 +15,6 @@ app:
   pprof:
     addr: "0.0.0.0:13999"
 
-db:
-  # 数据库配置
-  db_host: "127.0.0.1"
-  db_port: 3306
-  db_username: "root"
-  db_password: "root"
-  db_database: "fashionnove"
-  db_charset: "utf8mb4"
-  db_max_open_conns: 1000
-  db_max_idle_conns: 100
-  db_max_life_seconds: 300
-  db_sql_log: true
 log:
   #日志写入级别, 开发时推荐使用 "debug" 或者 "info" ，生产环境下使用 "error"
   log_level: "info"
@@ -43,17 +31,8 @@ log:
   # 是否压缩，压缩日志不方便查看，我们设置为 false（压缩可节省空间）
   compress: false
 
-redis:
-  # redis配置
-  redis_host: "127.0.0.1"
-  redis_port: "6380"
-  redis_password: ""
-  # 非cache场景使用，会话等不能清楚
-  redis_db: 10
+
 packet:
-  byteOrder: "big"
-  seqBytes: 2
-  routeBytes: 2
   bufferBytes: 5000
 # 注册中心
 registry:

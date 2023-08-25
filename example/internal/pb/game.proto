@@ -7,6 +7,8 @@ package pb;
 // 路由号枚举
 enum Route {
   Login = 0; // 登录路由号
+  CreateRoom =1; //创建房间，绑定node
+  SendMsg =2; //发送消息
 }
 
 message LoginCode {
@@ -26,5 +28,31 @@ message LoginRes {
   LoginCode.Code Code = 1; // 返回码
 }
 
+message CreateRoomCode {
+  enum Code {
+    Ok = 0; // 创建成功
+    Failed = 1; // 创建失败
+    NameExists = 2; // 名字已存在
+  }
+}
 
+message CreateRoomReq {
+ string Name = 1;
+}
+
+message CreateRoomRes{
+    CreateRoomCode.Code Code =1; //返回值
+    int32 ID = 2; // 房间ID
+}
+
+
+message SendMsgReq{
+  string Msg = 1;
+}
+
+message SendMsgRes{
+  int32 Code = 1; //收到消息
+  string Msg = 2; // 广播消息内容
+  string UserName =3; //用户名
+}
 

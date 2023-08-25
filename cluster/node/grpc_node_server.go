@@ -2,7 +2,6 @@ package node
 
 import (
 	"context"
-	"fmt"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -29,10 +28,8 @@ func (e *rpcService) Trigger(ctx context.Context, req *pb.TriggerRequest) (*pb.T
 	})
 	if err != nil {
 		if miss {
-			fmt.Println(12232223)
 			return nil, status.New(code.NotFoundSession, err.Error()).Err()
 		} else {
-			fmt.Println(4212323)
 			return nil, status.New(codes.Internal, err.Error()).Err()
 		}
 	}
@@ -43,7 +40,7 @@ func (e *rpcService) Trigger(ctx context.Context, req *pb.TriggerRequest) (*pb.T
 func (e *rpcService) Deliver(ctx context.Context, req *pb.DeliverRequest) (*pb.DeliverReply, error) {
 	miss, err := e.provider.Deliver(ctx, &cluster.DeliverArgs{
 		GID: req.GID,
-		NID: req.NID,
+		NID: req.NID, // gate 过来就是空的
 		CID: req.CID,
 		UID: req.UID,
 		Message: &packet.Message{

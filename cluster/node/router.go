@@ -2,11 +2,11 @@ package node
 
 import (
 	"context"
-	"github.com/cr-mao/loric/sugar"
 	"sync"
 
 	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/log"
+	"github.com/cr-mao/loric/sugar"
 )
 
 type RouteHandler func(ctx *Context)

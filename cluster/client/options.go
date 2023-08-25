@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"time"
 
 	"github.com/cr-mao/loric/conf"
 	"github.com/cr-mao/loric/encoding"
@@ -11,16 +10,14 @@ import (
 )
 
 const (
-	defaultName    = "client"        // 默认客户端名称
-	defaultCodec   = "proto"         // 默认编解码器名称
-	defaultTimeout = 3 * time.Second // 默认超时时间
+	defaultName  = "client" // 默认客户端名称
+	defaultCodec = "proto"  // 默认编解码器名称
 )
 
 const (
-	defaultIDKey      = "cluster.client.id"
-	defaultNameKey    = "cluster.client.name"
-	defaultCodecKey   = "cluster.client.codec"
-	defaultTimeoutKey = "cluster.client.timeout"
+	defaultIDKey    = "client.id"
+	defaultNameKey  = "client.name"
+	defaultCodecKey = "client.codec"
 )
 
 type Option func(o *options)

@@ -2,7 +2,6 @@ package node
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/cr-mao/loric/cluster"
 )
@@ -27,26 +26,21 @@ func (p *provider) Trigger(ctx context.Context, args *cluster.TriggerArgs) (bool
 			return true, ErrNotFoundUserSource
 		}
 	case cluster.Disconnect:
-		if args.UID > 0 {
+		if args.UID > 0 { // 网关过来这个是肯定成立的
 			_, ok, err := p.node.proxy.AskNode(ctx, args.UID, p.node.opts.id)
 			if err != nil {
-				fmt.Println(9239292932)
 				return false, err
 			}
 
 			if !ok {
-				fmt.Println(55555555)
 				return true, ErrNotFoundUserSource
 			}
 		}
 	}
-
-	fmt.Println(3232100000)
 	handler, ok := p.node.events.events[args.Event]
 	if !ok {
 		return false, nil
 	}
-
 	evt := p.node.events.evtPool.Get().(*Event)
 	evt.Event = args.Event
 	evt.GID = args.GID

@@ -46,7 +46,7 @@ func main() {
 		gate.WithRegistry(etcd.NewRegistry()),
 	)
 	// 添加网关组件, pprof分析
-	contanier.Add(gateServer, component.NewPProf())
+	contanier.Add(gateServer, component.NewPProf(conf.GetString("app.pprof.addr")))
 	// 启动容器
 	contanier.Serve()
 }

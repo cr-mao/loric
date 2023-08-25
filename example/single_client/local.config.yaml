@@ -1,0 +1,41 @@
+app:
+  # 应用名称
+  app_name: game
+  # 环境:支持local,testing,production
+  app_env: local
+  # 是否开启调试模式
+  app_debug: true
+  # 时区 , 数据库要%2f , time.loadlocation 要 xx/xx
+  timezone: "utc"
+  # version 对应客户端版本 只是做个标记
+  version: 0.0.1
+  # 进程id 存放路径
+  pidPath: "server.pid"
+  # pprof
+  pprof:
+    addr: "0.0.0.0:13999"
+
+log:
+  #日志写入级别, 开发时推荐使用 "debug" 或者 "info" ，生产环境下使用 "error"
+  log_level: "info"
+  # "single" 独立的文件,"daily" 按照日期每日一个
+  log_type: "daily"
+  # 日志文件路径
+  filename: "logs/logs.log"
+  # 64M
+  max_size: 64
+  #  最多保存日志文件数，0 为不限，MaxAge 到了还是会删
+  max_backup: 30
+  #   最多保存多少天，7 表示一周前的日志会被删除，0 表示不删
+  max_age: 7
+  # 是否压缩，压缩日志不方便查看，我们设置为 false（压缩可节省空间）
+  compress: false
+
+packet:
+  bufferBytes: 5000
+
+network:
+  tcp:
+    client:
+      addr: "127.0.0.1:3553"
+      heartbeatInterval: 10

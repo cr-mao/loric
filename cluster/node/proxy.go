@@ -2,7 +2,6 @@ package node
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -164,7 +163,6 @@ func (p *Proxy) BindNode(ctx context.Context, uid int64, nid ...string) error {
 	if len(nid) > 0 && nid[0] != "" {
 		bindNid = nid[0]
 	}
-
 	err := p.node.opts.locator.Set(ctx, uid, cluster.Node, bindNid)
 	if err != nil {
 		return err
@@ -257,7 +255,6 @@ func (p *Proxy) AskNode(ctx context.Context, uid int64, nid string) (string, boo
 	}
 	insID, err := p.node.opts.locator.Get(ctx, uid, cluster.Node)
 	if err != nil {
-		fmt.Println(34446777777)
 		return "", false, err
 	}
 	if insID == "" {

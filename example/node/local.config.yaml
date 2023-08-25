@@ -44,8 +44,7 @@ log:
   compress: false
 
 node:
-  # 必须是数字
-  id: node_01
+  id: "node1"
   name: "node_name1"
   timeout: 5
   grpc:
@@ -53,8 +52,6 @@ node:
       addr: 127.0.0.1:14002
     client:
       poolSize: 10
-
-
 
 redis:
   # redis配置

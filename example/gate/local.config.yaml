@@ -20,6 +20,7 @@ gate:
   id: gate_01
   name: "gate_name1"
   timeout: 5
+  auth_timeout: 100
   grpc:
       server:
         addr: 127.0.0.1:13002
@@ -39,7 +40,7 @@ network:
       # tcp包 最大长度 1mb
       maxMsgSize: 1024
       # 每秒最多接收单客户端单包数量
-      oneSecondMaxMsgNum: 30
+      oneSecondMaxMsgNum: 20000
 
 db:
   # 数据库配置

@@ -108,12 +108,12 @@ func (g *Gate) stopNetworkServer() {
 // 处理连接打开
 func (g *Gate) handleConnect(conn network.Conn) {
 	g.session.AddConn(conn)
-	go func() {
+	go func(conn network.Conn) {
 		select {
 		case <-time.After(g.opts.authTimeOut):
 			if conn.UID() <= 0 {
 				// x秒连接上来，没进行auth操作的 则判定为攻击
-				log.Infof(" attack remoteip:%s,remoteAddr:%s", conn.RemoteIP(), conn.RemoteAddr())
+				log.Infof(" long time not auth remoteip:%s,remoteAddr:%s", conn.RemoteIP(), conn.RemoteAddr())
 				err := conn.Close()
 				if err != nil {
 					log.Errorf("connect not  auth check err:%v", err)
@@ -122,7 +122,7 @@ func (g *Gate) handleConnect(conn network.Conn) {
 		case <-g.ctx.Done():
 			return
 		}
-	}()
+	}(conn)
 }
 
 // 处理断开连接

@@ -7,7 +7,6 @@ import (
 
 	clientv3 "go.etcd.io/etcd/client/v3"
 
-	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/registry"
 )
 
@@ -157,7 +156,7 @@ func (r *registrar) heartbeat(ctx context.Context, leaseID clientv3.LeaseID, key
 
 		select {
 		case _, ok = <-chKA:
-			log.Debug("keep alive ", ok, time.Now().Unix())
+			//log.Debug("keep alive ", ok, time.Now().Unix())
 			if !ok {
 				if ctx.Err() != nil {
 					return

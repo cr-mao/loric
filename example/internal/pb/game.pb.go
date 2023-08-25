@@ -20,19 +20,26 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// 路由号枚举
 type Route int32
 
 const (
-	Route_Login Route = 0
+	Route_Login      Route = 0 // 登录路由号
+	Route_CreateRoom Route = 1 //创建房间，绑定node
+	Route_SendMsg    Route = 2 //发送消息
 )
 
 // Enum value maps for Route.
 var (
 	Route_name = map[int32]string{
 		0: "Login",
+		1: "CreateRoom",
+		2: "SendMsg",
 	}
 	Route_value = map[string]int32{
-		"Login": 0,
+		"Login":      0,
+		"CreateRoom": 1,
+		"SendMsg":    2,
 	}
 )
 
@@ -107,6 +114,55 @@ func (x LoginCode_Code) Number() protoreflect.EnumNumber {
 // Deprecated: Use LoginCode_Code.Descriptor instead.
 func (LoginCode_Code) EnumDescriptor() ([]byte, []int) {
 	return file_game_proto_rawDescGZIP(), []int{0, 0}
+}
+
+type CreateRoomCode_Code int32
+
+const (
+	CreateRoomCode_Ok         CreateRoomCode_Code = 0 // 创建成功
+	CreateRoomCode_Failed     CreateRoomCode_Code = 1 // 创建失败
+	CreateRoomCode_NameExists CreateRoomCode_Code = 2 // 名字已存在
+)
+
+// Enum value maps for CreateRoomCode_Code.
+var (
+	CreateRoomCode_Code_name = map[int32]string{
+		0: "Ok",
+		1: "Failed",
+		2: "NameExists",
+	}
+	CreateRoomCode_Code_value = map[string]int32{
+		"Ok":         0,
+		"Failed":     1,
+		"NameExists": 2,
+	}
+)
+
+func (x CreateRoomCode_Code) Enum() *CreateRoomCode_Code {
+	p := new(CreateRoomCode_Code)
+	*p = x
+	return p
+}
+
+func (x CreateRoomCode_Code) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (CreateRoomCode_Code) Descriptor() protoreflect.EnumDescriptor {
+	return file_game_proto_enumTypes[2].Descriptor()
+}
+
+func (CreateRoomCode_Code) Type() protoreflect.EnumType {
+	return &file_game_proto_enumTypes[2]
+}
+
+func (x CreateRoomCode_Code) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CreateRoomCode_Code.Descriptor instead.
+func (CreateRoomCode_Code) EnumDescriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{3, 0}
 }
 
 type LoginCode struct {
@@ -243,6 +299,256 @@ func (x *LoginRes) GetCode() LoginCode_Code {
 	return LoginCode_Ok
 }
 
+type CreateRoomCode struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *CreateRoomCode) Reset() {
+	*x = CreateRoomCode{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateRoomCode) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoomCode) ProtoMessage() {}
+
+func (x *CreateRoomCode) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoomCode.ProtoReflect.Descriptor instead.
+func (*CreateRoomCode) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{3}
+}
+
+type CreateRoomReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name string `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+}
+
+func (x *CreateRoomReq) Reset() {
+	*x = CreateRoomReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateRoomReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoomReq) ProtoMessage() {}
+
+func (x *CreateRoomReq) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoomReq.ProtoReflect.Descriptor instead.
+func (*CreateRoomReq) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *CreateRoomReq) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type CreateRoomRes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code CreateRoomCode_Code `protobuf:"varint,1,opt,name=Code,proto3,enum=pb.CreateRoomCode_Code" json:"Code,omitempty"` //返回值
+	ID   int32               `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`                                 // 房间ID
+}
+
+func (x *CreateRoomRes) Reset() {
+	*x = CreateRoomRes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateRoomRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateRoomRes) ProtoMessage() {}
+
+func (x *CreateRoomRes) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateRoomRes.ProtoReflect.Descriptor instead.
+func (*CreateRoomRes) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CreateRoomRes) GetCode() CreateRoomCode_Code {
+	if x != nil {
+		return x.Code
+	}
+	return CreateRoomCode_Ok
+}
+
+func (x *CreateRoomRes) GetID() int32 {
+	if x != nil {
+		return x.ID
+	}
+	return 0
+}
+
+type SendMsgReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Msg string `protobuf:"bytes,1,opt,name=Msg,proto3" json:"Msg,omitempty"`
+}
+
+func (x *SendMsgReq) Reset() {
+	*x = SendMsgReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendMsgReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendMsgReq) ProtoMessage() {}
+
+func (x *SendMsgReq) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendMsgReq.ProtoReflect.Descriptor instead.
+func (*SendMsgReq) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *SendMsgReq) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+type SendMsgRes struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Code     int32  `protobuf:"varint,1,opt,name=Code,proto3" json:"Code,omitempty"`        //收到消息
+	Msg      string `protobuf:"bytes,2,opt,name=Msg,proto3" json:"Msg,omitempty"`           // 广播消息内容
+	UserName string `protobuf:"bytes,3,opt,name=UserName,proto3" json:"UserName,omitempty"` //用户名
+}
+
+func (x *SendMsgRes) Reset() {
+	*x = SendMsgRes{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SendMsgRes) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendMsgRes) ProtoMessage() {}
+
+func (x *SendMsgRes) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendMsgRes.ProtoReflect.Descriptor instead.
+func (*SendMsgRes) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *SendMsgRes) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *SendMsgRes) GetMsg() string {
+	if x != nil {
+		return x.Msg
+	}
+	return ""
+}
+
+func (x *SendMsgRes) GetUserName() string {
+	if x != nil {
+		return x.UserName
+	}
+	return ""
+}
+
 var File_game_proto protoreflect.FileDescriptor
 
 var file_game_proto_rawDesc = []byte{
@@ -254,10 +560,30 @@ var file_game_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x32, 0x0a, 0x08, 0x4c,
 	0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x26, 0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x18,
 	0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x12, 0x2e, 0x70, 0x62, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e,
-	0x43, 0x6f, 0x64, 0x65, 0x2e, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x2a,
-	0x12, 0x0a, 0x05, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x12, 0x09, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69,
-	0x6e, 0x10, 0x00, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x43, 0x6f, 0x64, 0x65, 0x2e, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x22,
+	0x3c, 0x0a, 0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x43, 0x6f, 0x64,
+	0x65, 0x22, 0x2a, 0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x06, 0x0a, 0x02, 0x4f, 0x6b, 0x10,
+	0x00, 0x12, 0x0a, 0x0a, 0x06, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x10, 0x01, 0x12, 0x0e, 0x0a,
+	0x0a, 0x4e, 0x61, 0x6d, 0x65, 0x45, 0x78, 0x69, 0x73, 0x74, 0x73, 0x10, 0x02, 0x22, 0x23, 0x0a,
+	0x0d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x65, 0x71, 0x12, 0x12,
+	0x0a, 0x04, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x4e, 0x61,
+	0x6d, 0x65, 0x22, 0x4c, 0x0a, 0x0d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d,
+	0x52, 0x65, 0x73, 0x12, 0x2b, 0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0e, 0x32, 0x17, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f,
+	0x6d, 0x43, 0x6f, 0x64, 0x65, 0x2e, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x43, 0x6f, 0x64, 0x65,
+	0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x49, 0x44,
+	0x22, 0x1e, 0x0a, 0x0a, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x71, 0x12, 0x10,
+	0x0a, 0x03, 0x4d, 0x73, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x4d, 0x73, 0x67,
+	0x22, 0x4e, 0x0a, 0x0a, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x73, 0x12, 0x12,
+	0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x43, 0x6f,
+	0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x03, 0x4d, 0x73, 0x67, 0x12, 0x1a, 0x0a, 0x08, 0x55, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65,
+	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x55, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65,
+	0x2a, 0x2f, 0x0a, 0x05, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x12, 0x09, 0x0a, 0x05, 0x4c, 0x6f, 0x67,
+	0x69, 0x6e, 0x10, 0x00, 0x12, 0x0e, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f,
+	0x6f, 0x6d, 0x10, 0x01, 0x12, 0x0b, 0x0a, 0x07, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x10,
+	0x02, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -272,22 +598,29 @@ func file_game_proto_rawDescGZIP() []byte {
 	return file_game_proto_rawDescData
 }
 
-var file_game_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_game_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_game_proto_goTypes = []interface{}{
-	(Route)(0),          // 0: pb.Route
-	(LoginCode_Code)(0), // 1: pb.LoginCode.Code
-	(*LoginCode)(nil),   // 2: pb.LoginCode
-	(*LoginReq)(nil),    // 3: pb.LoginReq
-	(*LoginRes)(nil),    // 4: pb.LoginRes
+	(Route)(0),               // 0: pb.Route
+	(LoginCode_Code)(0),      // 1: pb.LoginCode.Code
+	(CreateRoomCode_Code)(0), // 2: pb.CreateRoomCode.Code
+	(*LoginCode)(nil),        // 3: pb.LoginCode
+	(*LoginReq)(nil),         // 4: pb.LoginReq
+	(*LoginRes)(nil),         // 5: pb.LoginRes
+	(*CreateRoomCode)(nil),   // 6: pb.CreateRoomCode
+	(*CreateRoomReq)(nil),    // 7: pb.CreateRoomReq
+	(*CreateRoomRes)(nil),    // 8: pb.CreateRoomRes
+	(*SendMsgReq)(nil),       // 9: pb.SendMsgReq
+	(*SendMsgRes)(nil),       // 10: pb.SendMsgRes
 }
 var file_game_proto_depIdxs = []int32{
 	1, // 0: pb.LoginRes.Code:type_name -> pb.LoginCode.Code
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2, // 1: pb.CreateRoomRes.Code:type_name -> pb.CreateRoomCode.Code
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_game_proto_init() }
@@ -332,14 +665,74 @@ func file_game_proto_init() {
 				return nil
 			}
 		}
+		file_game_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateRoomCode); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_game_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateRoomReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_game_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CreateRoomRes); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_game_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendMsgReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_game_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*SendMsgRes); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_game_proto_rawDesc,
-			NumEnums:      2,
-			NumMessages:   3,
+			NumEnums:      3,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -56,7 +56,7 @@ func (p *proxy) trigger(ctx context.Context, event int32, cid, uid int64) {
 		CID:   cid,
 		UID:   uid,
 	}); err != nil {
-		log.Warnf("trigger event failed, gid: %s, cid: %d, uid: %d, event: %v, err: %v", p.gate.opts.id, cid, uid, event, err)
+		//log.Warnf("trigger event failed, gid: %s, cid: %d, uid: %d, event: [%s], err: %v", p.gate.opts.id, cid, uid, cluster.EventNames[event], err)
 	}
 }
 
@@ -96,17 +96,15 @@ func (p *proxy) trigger2(ctx context.Context, args *cluster.TriggerArgs) error {
 
 	for i := 0; i < 2; i++ {
 		if nid, err = p.LocateNode(ctx, args.UID); err != nil {
-			if args.Event == cluster.Disconnect && err == ErrNotFoundUserSource {
-				//todo 这个case 好想没用，用户都不知道再哪台机器上....
-				return p.doTrigger(ctx, args)
-			}
+			//if args.Event == cluster.Disconnect && err == ErrNotFoundUserSource {
+			//	//todo 这个case 好想没用，用户都不知道再哪台机器上....
+			//	return p.doTrigger(ctx, args)
+			//}
 			return err
 		}
-
 		if nid == prev {
 			return err
 		}
-
 		prev = nid
 
 		if ep, err = p.nodeDispatcher.FindEndpoint(nid); err != nil {
@@ -115,7 +113,6 @@ func (p *proxy) trigger2(ctx context.Context, args *cluster.TriggerArgs) error {
 			}
 			return err
 		}
-
 		client, err = p.gate.opts.transporter.NewNodeClient(ep)
 		if err != nil {
 			return err
@@ -140,7 +137,9 @@ func (p *proxy) LocateNode(ctx context.Context, uid int64) (string, error) {
 			return nid, nil
 		}
 	}
+
 	nid, err := p.gate.opts.locator.Get(ctx, uid, cluster.Node)
+
 	if err != nil {
 		return "", err
 	}

@@ -76,11 +76,11 @@ func TestNewClient_Dial(t *testing.T) {
 }
 
 func Test_Benchmark(t *testing.T) {
-	t.SkipNow()
+	//t.SkipNow()
 	// 并发数
 	concurrency := 6000
 	// 消息量
-	total := 12000
+	total := 1000000
 	// 总共发送的消息条数
 	totalSent := int64(0)
 	// 总共接收的消息条数
@@ -110,9 +110,9 @@ func Test_Benchmark(t *testing.T) {
 		if message.Route != 1 {
 			fmt.Println("Route error")
 		}
-		if string(message.Buffer) != "login ok" {
-			fmt.Println("date error")
-		}
+		//if string(message.Buffer) != "login ok" {
+		//	fmt.Println("date error")
+		//}
 
 		wg.Done()
 	})
@@ -185,4 +185,5 @@ func Test_Benchmark(t *testing.T) {
 	fmt.Printf("sent     requests    : %d\n", totalSent)
 	fmt.Printf("received requests    : %d\n", totalRecv)
 	fmt.Printf("throughput  (TPS)    : %d\n", int64(float64(totalRecv)/totalTime))
+	fmt.Println(totalTime)
 }

@@ -4,6 +4,7 @@ import (
 	"net"
 	"time"
 
+	"github.com/cr-mao/loric/errors"
 	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/network"
 )
@@ -119,6 +120,12 @@ func (s *server) serve() {
 	for {
 		conn, err := s.listener.Accept()
 		if err != nil {
+
+			if errors.Is(err, net.ErrClosed) {
+				log.Error("Listener closed")
+				return
+			}
+
 			if e, ok := err.(net.Error); ok && e.Timeout() {
 				if tempDelay == 0 {
 					tempDelay = 5 * time.Millisecond
@@ -133,9 +140,10 @@ func (s *server) serve() {
 				time.Sleep(tempDelay)
 				continue
 			}
-
+			// 应该走不到这里，只有上面2种
 			log.Errorf("tcp accept error: %v", err)
-			return
+			continue
+			//return
 		}
 
 		tempDelay = 0

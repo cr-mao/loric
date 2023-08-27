@@ -1,10 +1,12 @@
 package grpc
 
 import (
+	"errors"
 	"sync"
 	"sync/atomic"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/connectivity"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"
 
@@ -39,7 +41,7 @@ func NewClientBuilder(opts *ClientOptions) *ClientBuilder {
 func (b *ClientBuilder) GetConn(target string) (*grpc.ClientConn, error) {
 	val, ok := b.pools.Load(target)
 	if ok {
-		return val.(*Pool).Get(), nil
+		return val.(*Pool).Get()
 	}
 	size := b.opts.PoolSize
 	if size <= 0 {
@@ -50,17 +52,25 @@ func (b *ClientBuilder) GetConn(target string) (*grpc.ClientConn, error) {
 		return nil, err
 	}
 	b.pools.Store(target, pool)
-	return pool.Get(), nil
+	return pool.Get()
 }
 
 type Pool struct {
-	count uint64
-	index uint64
-	conns []*grpc.ClientConn
+	target string
+	count  uint64
+	index  uint64
+	conns  []*grpc.ClientConn
+	sync.Mutex
+	opts []grpc.DialOption
 }
 
 func newPool(count int, target string, opts ...grpc.DialOption) (*Pool, error) {
-	p := &Pool{count: uint64(count), conns: make([]*grpc.ClientConn, count)}
+	p := &Pool{
+		count:  uint64(count),
+		conns:  make([]*grpc.ClientConn, count),
+		target: target,
+		opts:   opts,
+	}
 	for i := 0; i < count; i++ {
 		conn, err := grpc.Dial(target, opts...)
 		if err != nil {
@@ -71,6 +81,38 @@ func newPool(count int, target string, opts ...grpc.DialOption) (*Pool, error) {
 	return p, nil
 }
 
-func (p *Pool) Get() *grpc.ClientConn {
-	return p.conns[int(atomic.AddUint64(&p.index, 1)%p.count)]
+func (p *Pool) Get() (*grpc.ClientConn, error) {
+	idx := int(atomic.AddUint64(&p.index, 1) % p.count)
+	conn := p.conns[idx]
+	if conn != nil && p.checkState(conn) == nil {
+		return conn, nil
+	}
+	// gc old conn
+	if conn != nil {
+		conn.Close()
+	}
+	p.Lock()
+	defer p.Unlock()
+	// double check, already inited
+	conn = p.conns[idx]
+	if conn != nil && p.checkState(conn) == nil {
+		return conn, nil
+	}
+	conn, err := grpc.Dial(p.target, p.opts...)
+	if err != nil {
+		return nil, err
+	}
+	p.conns[idx] = conn
+	return conn, nil
+}
+
+var ErrConnShutdown = errors.New("grpc conn shutdown")
+
+func (p *Pool) checkState(conn *grpc.ClientConn) error {
+	state := conn.GetState()
+	switch state {
+	case connectivity.TransientFailure, connectivity.Shutdown:
+		return ErrConnShutdown
+	}
+	return nil
 }

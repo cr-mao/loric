@@ -32,6 +32,7 @@ func (c *client) Dial() (network.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
+	//  DialTimeout
 	conn, err := net.Dial(addr.Network(), addr.String())
 	if err != nil {
 		return nil, err

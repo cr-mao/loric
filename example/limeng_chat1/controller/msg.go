@@ -15,19 +15,20 @@ import (
 type MsgController struct{}
 
 func (c *MsgController) MsgHandle(ctx *node.Context) {
-	//log.Infof("msgHandle gid:%s,nid:%s,cid:%d,uid:%d", ctx.Request.GID, ctx.Request.NID, ctx.Request.CID, ctx.Request.UID)
-	req := &pb.SendMsgReq{}
-	res := &pb.SendMsgRes{}
+	log.Infof("msgHandle gid:%s,nid:%s,cid:%d,uid:%d", ctx.Request.GID, ctx.Request.NID, ctx.Request.CID, ctx.Request.UID)
+	req := &pb.LianmengChatMsgReq{}
+	res := &pb.LianmengChatSendMsgRes{}
 	defer func() {
 		if err := ctx.Response(res); err != nil {
 			log.Errorf("response login message failed, err: %v", err)
 		}
 	}()
 	if err := ctx.Request.Parse(req); err != nil {
-		log.Errorf("invalid login message, err: %v", err)
+		log.Errorf("invalid  message, err: %v", err)
 		res.Code = 0
 		return
 	}
+
 	res.Msg = req.Msg + " from node:" + ctx.GetNodeId()
 	if ctx.Request.UID == 1 {
 		res.UserName = "cr-mao"

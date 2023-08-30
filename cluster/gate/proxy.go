@@ -56,7 +56,7 @@ func (p *proxy) trigger(ctx context.Context, event int32, cid, uid int64) {
 		CID:   cid,
 		UID:   uid,
 	}); err != nil {
-		//log.Warnf("trigger event failed, gid: %s, cid: %d, uid: %d, event: [%s], err: %v", p.gate.opts.id, cid, uid, cluster.EventNames[event], err)
+		log.Warnf("trigger event failed, gid: %s, cid: %d, uid: %d, event: [%s], err: %v", p.gate.opts.id, cid, uid, cluster.EventNames[event], err)
 	}
 }
 

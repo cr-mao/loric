@@ -15,7 +15,7 @@ import (
 	"github.com/cr-mao/loric/cluster/node"
 	"github.com/cr-mao/loric/component"
 	"github.com/cr-mao/loric/conf"
-	"github.com/cr-mao/loric/example/node/router"
+	"github.com/cr-mao/loric/example/auth/router"
 	"github.com/cr-mao/loric/locate/redis"
 	"github.com/cr-mao/loric/registry/etcd"
 	"github.com/cr-mao/loric/transport/grpc"
@@ -25,11 +25,6 @@ func main() {
 	conf.InitConfig("local")
 	//随机数种子
 	rand.Seed(time.Now().UnixNano())
-
-	nodeId := flag.String("node_id", conf.Get("node.id"), "节点id")
-	nodeName := flag.String("node_name", conf.Get("node.name"), "节点名")
-	pprofAddr := flag.String("pprof_addr", conf.Get("app.pprof.addr"), "pprof地址")
-	grpcAddr := flag.String("grpc_addr", conf.GetString("node.grpc.server.addr"), "grpc addr")
 
 	flag.Parse()
 	// 配置初始化，依赖命令行 --env 参数
@@ -47,11 +42,8 @@ func main() {
 	rpcServer := node.NewTransport(node.WithServerOptions(
 		serverOpts...,
 	),
-		node.WithServerListenAddr(*grpcAddr),
 	)
 	nodeInstance := node.NewNode(
-		node.WithID(*nodeId),
-		node.WithName(*nodeName),
 		node.WithLocator(location),
 		node.WithTransporter(rpcServer),
 		node.WithRegistry(etcd.NewRegistry()),
@@ -59,9 +51,8 @@ func main() {
 
 	// 注册路由
 	router.NewRouter(nodeInstance.Proxy()).Init()
-
 	// 添加网关组件, pprof分析
-	contanier.Add(nodeInstance, component.NewPProf(*pprofAddr))
+	contanier.Add(nodeInstance, component.NewPProf(conf.GetString("app.pprof.addr")))
 	// 启动容器
 	contanier.Serve()
 }

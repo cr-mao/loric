@@ -2,8 +2,6 @@ package grpc
 
 import (
 	"context"
-	"runtime/debug"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 
@@ -15,7 +13,8 @@ func UnaryCrashInterceptor(ctx context.Context, req interface{}, info *grpc.Unar
 	handler grpc.UnaryHandler) (resp interface{}, err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Errorf("recovery method: %s, message: %+v\n \n %s", info.FullMethod, r, debug.Stack())
+			//log.Errorf("recovery method: %s, message: %+v\n \n %s", info.FullMethod, r, debug.Stack())
+			log.Errorf("recovery method: %s, message: %v\n ", info.FullMethod, r)
 		}
 	}()
 	resp, err = handler(ctx, req)

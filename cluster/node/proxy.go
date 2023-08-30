@@ -2,6 +2,7 @@ package node
 
 import (
 	"context"
+	"github.com/cr-mao/loric/sugar/slice"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -274,6 +275,24 @@ func (p *Proxy) FetchGateList(ctx context.Context, states ...int32) ([]*registry
 // FetchNodeList 拉取节点列表
 func (p *Proxy) FetchNodeList(ctx context.Context, states ...int32) ([]*registry.ServiceInstance, error) {
 	return p.FetchServiceList(ctx, cluster.Node, states...)
+}
+
+// 获得路由相关的node列表
+func (p *Proxy) FetchNodeIdListByRoute(ctx context.Context, routeIds ...int32) ([]string, error) {
+	nodes, err := p.FetchServiceList(ctx, cluster.Node, cluster.Work)
+	if err != nil {
+		return nil, nil
+	}
+	var nodeIds []string
+	for _, nodeInfo := range nodes {
+		for _, route := range nodeInfo.Routes {
+			if slice.InSliceInt32(route.ID, routeIds) {
+				nodeIds = append(nodeIds, nodeInfo.ID)
+				break
+			}
+		}
+	}
+	return nodeIds, nil
 }
 
 // FetchServiceList 拉取服务列表
@@ -700,9 +719,9 @@ func (p *Proxy) indirectDisconnect(ctx context.Context, uid int64, isForce bool)
 }
 
 // Invoke 调用函数 （可以理解为单线程操作)
-func (p *Proxy) Invoke(fn func()) {
-	p.node.fnChan <- fn
-}
+//func (p *Proxy) Invoke(fn func()) {
+//	p.node.fnChan <- fn
+//}
 
 // 启动监听
 func (p *Proxy) watch(ctx context.Context) {

@@ -10,7 +10,7 @@ import (
 	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/cluster/node"
 	"github.com/cr-mao/loric/example/internal/pb"
-	"github.com/cr-mao/loric/example/node/controller"
+	"github.com/cr-mao/loric/example/limeng_chat/controller"
 )
 
 type Router struct {
@@ -25,15 +25,12 @@ func NewRouter(proxy *node.Proxy) *Router {
 
 func (r *Router) Init() {
 	var eventController = &controller.EventController{}
-	var loginController = &controller.LoginController{}
-	var roomController = &controller.RoomController{}
 	var msgController = &controller.MsgController{}
 	// 监听重新连接
 	r.proxy.Events().AddEventHandler(cluster.Reconnect, eventController.Reconnect)
 	// 监听连接断开
 	r.proxy.Events().AddEventHandler(cluster.Disconnect, eventController.Disconnect)
 	// 创建路由
-	r.proxy.Router().AddRouteHandler(int32(pb.Route_Login), false, loginController.Login)
-	r.proxy.Router().AddRouteHandler(int32(pb.Route_CreateRoom), false, roomController.CreateRoom)
-	r.proxy.Router().AddRouteHandler(int32(pb.Route_SendMsg), true, msgController.MsgHandle)
+	r.proxy.Router().AddRouteHandler(int32(pb.Route_LianmentChatEnter), true, msgController.Enter)
+	r.proxy.Router().AddRouteHandler(int32(pb.Route_LianmengChat), true, msgController.MsgHandle)
 }

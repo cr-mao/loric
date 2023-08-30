@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/cr-mao/loric"
 	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/cluster/client"
 	"github.com/cr-mao/loric/example/internal/pb"
 	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/network/tcp"
-	"sync/atomic"
 	"time"
 )
 
@@ -44,17 +42,17 @@ func onConnect(proxy client.Proxy) {
 	log.Infof("connection is opened")
 
 	err := proxy.Push(0, int32(pb.Route_Login), &pb.LoginReq{
-		Token: "cr-mao",
+		Token: "cr-mao5",
 	})
 	if err != nil {
-		log.Errorf("push create room message failed: %v", err)
+		log.Errorf("login message failed: %v", err)
 	}
 }
 
 func onReconnect(proxy client.Proxy) {
 	log.Infof("connection is reopened")
 	err := proxy.Push(0, int32(pb.Route_Login), &pb.LoginReq{
-		Token: "cr-mao",
+		Token: "cr-mao5",
 	})
 	if err != nil {
 		log.Errorf("push login message failed: %v", err)
@@ -75,12 +73,12 @@ func initRoute(proxy client.Proxy) {
 	//proxy.AddRouteHandler(route.Register, registerHandler)
 	// 用户登录
 	proxy.AddRouteHandler(int32(pb.Route_Login), loginHandler)
-	// 创建房间, 创建房间这个 服务器会进行绑定node操作，后续有状态 请求则打到该台服务器上.
-	proxy.AddRouteHandler(int32(pb.Route_CreateRoom), createRoomHandler)
-	//// 通知消息
-	proxy.AddRouteHandler(int32(pb.Route_SendMsg), notifyMessageHandler)
-}
+	// 加入联盟
+	proxy.AddRouteHandler(int32(pb.Route_LianmentChatEnter), enterHandler)
+	// 通知消息
+	proxy.AddRouteHandler(int32(pb.Route_LianmengChat), notifyMessageHandler)
 
+}
 func loginHandler(r client.Request) {
 	res := &pb.LoginRes{}
 
@@ -96,55 +94,49 @@ func loginHandler(r client.Request) {
 		return
 	}
 	log.Infof("登录结果:%s", res.Code)
-
-	err = r.Proxy().Push(0, int32(pb.Route_CreateRoom), &pb.CreateRoomReq{
-		Name: "room1",
-	})
-
+	err = r.Proxy().Push(0, int32(pb.Route_LianmentChatEnter), nil)
 	if err != nil {
 		log.Errorf("push create room message failed: %v", err)
 	}
 }
 
-func createRoomHandler(r client.Request) {
-	res := &pb.CreateRoomRes{}
-
+func enterHandler(r client.Request) {
+	res := &pb.LianmengEnterResponse{}
 	err := r.Parse(res)
 	if err != nil {
 		log.Errorf("invalid login response message, err: %v", err)
 		return
 	}
-
 	switch res.Code {
-	case pb.CreateRoomCode_Failed, pb.CreateRoomCode_NameExists:
+	case pb.LianmengEnterCode_Failed:
 		log.Error("create room failed")
 		return
 	}
-	log.Info("创建房间成功")
-	err = r.Proxy().Push(0, int32(pb.Route_SendMsg), &pb.SendMsgReq{
+	log.Info("登录联盟聊天服成功")
+	err = r.Proxy().Push(0, int32(pb.Route_LianmengChat), &pb.LianmengChatMsgReq{
 		Msg: "hello",
 	})
 	if err != nil {
 		log.Errorf("push message failed: %v", err)
 	}
-
 }
 
 func notifyMessageHandler(r client.Request) {
-	res := &pb.SendMsgRes{}
+	res := &pb.LianmengChatSendMsgRes{}
 	err := r.Parse(res)
 	if err != nil {
-		log.Errorf("invalid login response message, err: %v", err)
+		log.Errorf("notifyMessageHandler err: %v", err)
 		return
 	}
-	//log.Infof("%s say: %s", res.UserName, res.Msg)
-	atomic.AddInt32(&sendMsgCount, 1)
-	if atomic.LoadInt32(&sendMsgCount) < 100000 {
-		err = r.Proxy().Push(0, int32(pb.Route_SendMsg), &pb.SendMsgReq{
-			Msg: "hello",
-		})
-		//fmt.Println(time.Now().Unix(), sendMsgCount)
-	} else {
-		fmt.Println(time.Now().Sub(startTime).Milliseconds())
-	}
+	//fmt.Println(res.Code)
+	log.Infof("%s say:%s", res.UserName, res.Msg)
+	//atomic.AddInt32(&sendMsgCount, 1)
+	//if atomic.LoadInt32(&sendMsgCount) < 100000 {
+	//	err = r.Proxy().Push(0, int32(pb.Route_SendMsg), &pb.SendMsgReq{
+	//		Msg: "hello",
+	//	})
+	//	//fmt.Println(time.Now().Unix(), sendMsgCount)
+	//} else {
+	//	fmt.Println(time.Now().Sub(startTime).Milliseconds())
+	//}
 }

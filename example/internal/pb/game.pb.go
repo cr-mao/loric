@@ -24,22 +24,22 @@ const (
 type Route int32
 
 const (
-	Route_Login      Route = 0 // 登录路由号
-	Route_CreateRoom Route = 1 //创建房间，绑定node
-	Route_SendMsg    Route = 2 //发送消息
+	Route_Login             Route = 0 // 登录路由号
+	Route_LianmentChatEnter Route = 1 //进入联盟聊天室
+	Route_LianmengChat      Route = 2 // 发送消息
 )
 
 // Enum value maps for Route.
 var (
 	Route_name = map[int32]string{
 		0: "Login",
-		1: "CreateRoom",
-		2: "SendMsg",
+		1: "LianmentChatEnter",
+		2: "LianmengChat",
 	}
 	Route_value = map[string]int32{
-		"Login":      0,
-		"CreateRoom": 1,
-		"SendMsg":    2,
+		"Login":             0,
+		"LianmentChatEnter": 1,
+		"LianmengChat":      2,
 	}
 )
 
@@ -116,53 +116,96 @@ func (LoginCode_Code) EnumDescriptor() ([]byte, []int) {
 	return file_game_proto_rawDescGZIP(), []int{0, 0}
 }
 
-type CreateRoomCode_Code int32
+type LianmengEnterCode_Code int32
 
 const (
-	CreateRoomCode_Ok         CreateRoomCode_Code = 0 // 创建成功
-	CreateRoomCode_Failed     CreateRoomCode_Code = 1 // 创建失败
-	CreateRoomCode_NameExists CreateRoomCode_Code = 2 // 名字已存在
+	LianmengEnterCode_Ok     LianmengEnterCode_Code = 0 // 成功
+	LianmengEnterCode_Failed LianmengEnterCode_Code = 1 // 失败
 )
 
-// Enum value maps for CreateRoomCode_Code.
+// Enum value maps for LianmengEnterCode_Code.
 var (
-	CreateRoomCode_Code_name = map[int32]string{
+	LianmengEnterCode_Code_name = map[int32]string{
 		0: "Ok",
 		1: "Failed",
-		2: "NameExists",
 	}
-	CreateRoomCode_Code_value = map[string]int32{
-		"Ok":         0,
-		"Failed":     1,
-		"NameExists": 2,
+	LianmengEnterCode_Code_value = map[string]int32{
+		"Ok":     0,
+		"Failed": 1,
 	}
 )
 
-func (x CreateRoomCode_Code) Enum() *CreateRoomCode_Code {
-	p := new(CreateRoomCode_Code)
+func (x LianmengEnterCode_Code) Enum() *LianmengEnterCode_Code {
+	p := new(LianmengEnterCode_Code)
 	*p = x
 	return p
 }
 
-func (x CreateRoomCode_Code) String() string {
+func (x LianmengEnterCode_Code) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (CreateRoomCode_Code) Descriptor() protoreflect.EnumDescriptor {
+func (LianmengEnterCode_Code) Descriptor() protoreflect.EnumDescriptor {
 	return file_game_proto_enumTypes[2].Descriptor()
 }
 
-func (CreateRoomCode_Code) Type() protoreflect.EnumType {
+func (LianmengEnterCode_Code) Type() protoreflect.EnumType {
 	return &file_game_proto_enumTypes[2]
 }
 
-func (x CreateRoomCode_Code) Number() protoreflect.EnumNumber {
+func (x LianmengEnterCode_Code) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use CreateRoomCode_Code.Descriptor instead.
-func (CreateRoomCode_Code) EnumDescriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{3, 0}
+// Deprecated: Use LianmengEnterCode_Code.Descriptor instead.
+func (LianmengEnterCode_Code) EnumDescriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{1, 0}
+}
+
+type LianmengChatCode_Code int32
+
+const (
+	LianmengChatCode_Ok     LianmengChatCode_Code = 0 // 成功
+	LianmengChatCode_Failed LianmengChatCode_Code = 1 // 失败
+)
+
+// Enum value maps for LianmengChatCode_Code.
+var (
+	LianmengChatCode_Code_name = map[int32]string{
+		0: "Ok",
+		1: "Failed",
+	}
+	LianmengChatCode_Code_value = map[string]int32{
+		"Ok":     0,
+		"Failed": 1,
+	}
+)
+
+func (x LianmengChatCode_Code) Enum() *LianmengChatCode_Code {
+	p := new(LianmengChatCode_Code)
+	*p = x
+	return p
+}
+
+func (x LianmengChatCode_Code) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (LianmengChatCode_Code) Descriptor() protoreflect.EnumDescriptor {
+	return file_game_proto_enumTypes[3].Descriptor()
+}
+
+func (LianmengChatCode_Code) Type() protoreflect.EnumType {
+	return &file_game_proto_enumTypes[3]
+}
+
+func (x LianmengChatCode_Code) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use LianmengChatCode_Code.Descriptor instead.
+func (LianmengChatCode_Code) EnumDescriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{2, 0}
 }
 
 type LoginCode struct {
@@ -203,6 +246,82 @@ func (*LoginCode) Descriptor() ([]byte, []int) {
 	return file_game_proto_rawDescGZIP(), []int{0}
 }
 
+type LianmengEnterCode struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *LianmengEnterCode) Reset() {
+	*x = LianmengEnterCode{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LianmengEnterCode) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LianmengEnterCode) ProtoMessage() {}
+
+func (x *LianmengEnterCode) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LianmengEnterCode.ProtoReflect.Descriptor instead.
+func (*LianmengEnterCode) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{1}
+}
+
+type LianmengChatCode struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *LianmengChatCode) Reset() {
+	*x = LianmengChatCode{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_game_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *LianmengChatCode) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LianmengChatCode) ProtoMessage() {}
+
+func (x *LianmengChatCode) ProtoReflect() protoreflect.Message {
+	mi := &file_game_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LianmengChatCode.ProtoReflect.Descriptor instead.
+func (*LianmengChatCode) Descriptor() ([]byte, []int) {
+	return file_game_proto_rawDescGZIP(), []int{2}
+}
+
 // 登录请求
 type LoginReq struct {
 	state         protoimpl.MessageState
@@ -215,7 +334,7 @@ type LoginReq struct {
 func (x *LoginReq) Reset() {
 	*x = LoginReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[1]
+		mi := &file_game_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -228,7 +347,7 @@ func (x *LoginReq) String() string {
 func (*LoginReq) ProtoMessage() {}
 
 func (x *LoginReq) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[1]
+	mi := &file_game_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -241,7 +360,7 @@ func (x *LoginReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginReq.ProtoReflect.Descriptor instead.
 func (*LoginReq) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{1}
+	return file_game_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *LoginReq) GetToken() string {
@@ -263,7 +382,7 @@ type LoginRes struct {
 func (x *LoginRes) Reset() {
 	*x = LoginRes{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[2]
+		mi := &file_game_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -276,7 +395,7 @@ func (x *LoginRes) String() string {
 func (*LoginRes) ProtoMessage() {}
 
 func (x *LoginRes) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[2]
+	mi := &file_game_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -289,7 +408,7 @@ func (x *LoginRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LoginRes.ProtoReflect.Descriptor instead.
 func (*LoginRes) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{2}
+	return file_game_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *LoginRes) GetCode() LoginCode_Code {
@@ -299,102 +418,16 @@ func (x *LoginRes) GetCode() LoginCode_Code {
 	return LoginCode_Ok
 }
 
-type CreateRoomCode struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-}
-
-func (x *CreateRoomCode) Reset() {
-	*x = CreateRoomCode{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[3]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateRoomCode) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateRoomCode) ProtoMessage() {}
-
-func (x *CreateRoomCode) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[3]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateRoomCode.ProtoReflect.Descriptor instead.
-func (*CreateRoomCode) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{3}
-}
-
-type CreateRoomReq struct {
+type LianmengEnterResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name string `protobuf:"bytes,1,opt,name=Name,proto3" json:"Name,omitempty"`
+	Code LianmengEnterCode_Code `protobuf:"varint,1,opt,name=Code,proto3,enum=pb.LianmengEnterCode_Code" json:"Code,omitempty"` //返回码
 }
 
-func (x *CreateRoomReq) Reset() {
-	*x = CreateRoomReq{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_game_proto_msgTypes[4]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *CreateRoomReq) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateRoomReq) ProtoMessage() {}
-
-func (x *CreateRoomReq) ProtoReflect() protoreflect.Message {
-	mi := &file_game_proto_msgTypes[4]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateRoomReq.ProtoReflect.Descriptor instead.
-func (*CreateRoomReq) Descriptor() ([]byte, []int) {
-	return file_game_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *CreateRoomReq) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type CreateRoomRes struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Code CreateRoomCode_Code `protobuf:"varint,1,opt,name=Code,proto3,enum=pb.CreateRoomCode_Code" json:"Code,omitempty"` //返回值
-	ID   int32               `protobuf:"varint,2,opt,name=ID,proto3" json:"ID,omitempty"`                                 // 房间ID
-}
-
-func (x *CreateRoomRes) Reset() {
-	*x = CreateRoomRes{}
+func (x *LianmengEnterResponse) Reset() {
+	*x = LianmengEnterResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_game_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -402,13 +435,13 @@ func (x *CreateRoomRes) Reset() {
 	}
 }
 
-func (x *CreateRoomRes) String() string {
+func (x *LianmengEnterResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateRoomRes) ProtoMessage() {}
+func (*LianmengEnterResponse) ProtoMessage() {}
 
-func (x *CreateRoomRes) ProtoReflect() protoreflect.Message {
+func (x *LianmengEnterResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_game_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -420,26 +453,19 @@ func (x *CreateRoomRes) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateRoomRes.ProtoReflect.Descriptor instead.
-func (*CreateRoomRes) Descriptor() ([]byte, []int) {
+// Deprecated: Use LianmengEnterResponse.ProtoReflect.Descriptor instead.
+func (*LianmengEnterResponse) Descriptor() ([]byte, []int) {
 	return file_game_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *CreateRoomRes) GetCode() CreateRoomCode_Code {
+func (x *LianmengEnterResponse) GetCode() LianmengEnterCode_Code {
 	if x != nil {
 		return x.Code
 	}
-	return CreateRoomCode_Ok
+	return LianmengEnterCode_Ok
 }
 
-func (x *CreateRoomRes) GetID() int32 {
-	if x != nil {
-		return x.ID
-	}
-	return 0
-}
-
-type SendMsgReq struct {
+type LianmengChatMsgReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -447,8 +473,8 @@ type SendMsgReq struct {
 	Msg string `protobuf:"bytes,1,opt,name=Msg,proto3" json:"Msg,omitempty"`
 }
 
-func (x *SendMsgReq) Reset() {
-	*x = SendMsgReq{}
+func (x *LianmengChatMsgReq) Reset() {
+	*x = LianmengChatMsgReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_game_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -456,13 +482,13 @@ func (x *SendMsgReq) Reset() {
 	}
 }
 
-func (x *SendMsgReq) String() string {
+func (x *LianmengChatMsgReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SendMsgReq) ProtoMessage() {}
+func (*LianmengChatMsgReq) ProtoMessage() {}
 
-func (x *SendMsgReq) ProtoReflect() protoreflect.Message {
+func (x *LianmengChatMsgReq) ProtoReflect() protoreflect.Message {
 	mi := &file_game_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -474,30 +500,30 @@ func (x *SendMsgReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SendMsgReq.ProtoReflect.Descriptor instead.
-func (*SendMsgReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use LianmengChatMsgReq.ProtoReflect.Descriptor instead.
+func (*LianmengChatMsgReq) Descriptor() ([]byte, []int) {
 	return file_game_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *SendMsgReq) GetMsg() string {
+func (x *LianmengChatMsgReq) GetMsg() string {
 	if x != nil {
 		return x.Msg
 	}
 	return ""
 }
 
-type SendMsgRes struct {
+type LianmengChatSendMsgRes struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Code     int32  `protobuf:"varint,1,opt,name=Code,proto3" json:"Code,omitempty"`        //收到消息
-	Msg      string `protobuf:"bytes,2,opt,name=Msg,proto3" json:"Msg,omitempty"`           // 广播消息内容
-	UserName string `protobuf:"bytes,3,opt,name=UserName,proto3" json:"UserName,omitempty"` //用户名
+	Code     LianmengChatCode_Code `protobuf:"varint,1,opt,name=Code,proto3,enum=pb.LianmengChatCode_Code" json:"Code,omitempty"`
+	Msg      string                `protobuf:"bytes,2,opt,name=Msg,proto3" json:"Msg,omitempty"`           // 广播消息内容
+	UserName string                `protobuf:"bytes,3,opt,name=UserName,proto3" json:"UserName,omitempty"` //用户名
 }
 
-func (x *SendMsgRes) Reset() {
-	*x = SendMsgRes{}
+func (x *LianmengChatSendMsgRes) Reset() {
+	*x = LianmengChatSendMsgRes{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_game_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -505,13 +531,13 @@ func (x *SendMsgRes) Reset() {
 	}
 }
 
-func (x *SendMsgRes) String() string {
+func (x *LianmengChatSendMsgRes) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SendMsgRes) ProtoMessage() {}
+func (*LianmengChatSendMsgRes) ProtoMessage() {}
 
-func (x *SendMsgRes) ProtoReflect() protoreflect.Message {
+func (x *LianmengChatSendMsgRes) ProtoReflect() protoreflect.Message {
 	mi := &file_game_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -523,26 +549,26 @@ func (x *SendMsgRes) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SendMsgRes.ProtoReflect.Descriptor instead.
-func (*SendMsgRes) Descriptor() ([]byte, []int) {
+// Deprecated: Use LianmengChatSendMsgRes.ProtoReflect.Descriptor instead.
+func (*LianmengChatSendMsgRes) Descriptor() ([]byte, []int) {
 	return file_game_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *SendMsgRes) GetCode() int32 {
+func (x *LianmengChatSendMsgRes) GetCode() LianmengChatCode_Code {
 	if x != nil {
 		return x.Code
 	}
-	return 0
+	return LianmengChatCode_Ok
 }
 
-func (x *SendMsgRes) GetMsg() string {
+func (x *LianmengChatSendMsgRes) GetMsg() string {
 	if x != nil {
 		return x.Msg
 	}
 	return ""
 }
 
-func (x *SendMsgRes) GetUserName() string {
+func (x *LianmengChatSendMsgRes) GetUserName() string {
 	if x != nil {
 		return x.UserName
 	}
@@ -555,35 +581,38 @@ var file_game_proto_rawDesc = []byte{
 	0x0a, 0x0a, 0x67, 0x61, 0x6d, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x02, 0x70, 0x62,
 	0x22, 0x27, 0x0a, 0x09, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x43, 0x6f, 0x64, 0x65, 0x22, 0x1a, 0x0a,
 	0x04, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x06, 0x0a, 0x02, 0x4f, 0x6b, 0x10, 0x00, 0x12, 0x0a, 0x0a,
-	0x06, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x10, 0x01, 0x22, 0x20, 0x0a, 0x08, 0x4c, 0x6f, 0x67,
-	0x69, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x14, 0x0a, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x32, 0x0a, 0x08, 0x4c,
-	0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x26, 0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x12, 0x2e, 0x70, 0x62, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e,
-	0x43, 0x6f, 0x64, 0x65, 0x2e, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x22,
-	0x3c, 0x0a, 0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x43, 0x6f, 0x64,
-	0x65, 0x22, 0x2a, 0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x06, 0x0a, 0x02, 0x4f, 0x6b, 0x10,
-	0x00, 0x12, 0x0a, 0x0a, 0x06, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x10, 0x01, 0x12, 0x0e, 0x0a,
-	0x0a, 0x4e, 0x61, 0x6d, 0x65, 0x45, 0x78, 0x69, 0x73, 0x74, 0x73, 0x10, 0x02, 0x22, 0x23, 0x0a,
-	0x0d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d, 0x52, 0x65, 0x71, 0x12, 0x12,
-	0x0a, 0x04, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x4e, 0x61,
-	0x6d, 0x65, 0x22, 0x4c, 0x0a, 0x0d, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f, 0x6d,
-	0x52, 0x65, 0x73, 0x12, 0x2b, 0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x0e, 0x32, 0x17, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f, 0x6f,
-	0x6d, 0x43, 0x6f, 0x64, 0x65, 0x2e, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x43, 0x6f, 0x64, 0x65,
-	0x12, 0x0e, 0x0a, 0x02, 0x49, 0x44, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x02, 0x49, 0x44,
-	0x22, 0x1e, 0x0a, 0x0a, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x71, 0x12, 0x10,
-	0x0a, 0x03, 0x4d, 0x73, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x4d, 0x73, 0x67,
-	0x22, 0x4e, 0x0a, 0x0a, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x73, 0x12, 0x12,
-	0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x43, 0x6f,
-	0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x03, 0x4d, 0x73, 0x67, 0x12, 0x1a, 0x0a, 0x08, 0x55, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65,
-	0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x55, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65,
-	0x2a, 0x2f, 0x0a, 0x05, 0x52, 0x6f, 0x75, 0x74, 0x65, 0x12, 0x09, 0x0a, 0x05, 0x4c, 0x6f, 0x67,
-	0x69, 0x6e, 0x10, 0x00, 0x12, 0x0e, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x52, 0x6f,
-	0x6f, 0x6d, 0x10, 0x01, 0x12, 0x0b, 0x0a, 0x07, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x10,
-	0x02, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x06, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x10, 0x01, 0x22, 0x2f, 0x0a, 0x11, 0x4c, 0x69, 0x61,
+	0x6e, 0x6d, 0x65, 0x6e, 0x67, 0x45, 0x6e, 0x74, 0x65, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x22, 0x1a,
+	0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x06, 0x0a, 0x02, 0x4f, 0x6b, 0x10, 0x00, 0x12, 0x0a,
+	0x0a, 0x06, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x10, 0x01, 0x22, 0x2e, 0x0a, 0x10, 0x4c, 0x69,
+	0x61, 0x6e, 0x6d, 0x65, 0x6e, 0x67, 0x43, 0x68, 0x61, 0x74, 0x43, 0x6f, 0x64, 0x65, 0x22, 0x1a,
+	0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x06, 0x0a, 0x02, 0x4f, 0x6b, 0x10, 0x00, 0x12, 0x0a,
+	0x0a, 0x06, 0x46, 0x61, 0x69, 0x6c, 0x65, 0x64, 0x10, 0x01, 0x22, 0x20, 0x0a, 0x08, 0x4c, 0x6f,
+	0x67, 0x69, 0x6e, 0x52, 0x65, 0x71, 0x12, 0x14, 0x0a, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x32, 0x0a, 0x08,
+	0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x73, 0x12, 0x26, 0x0a, 0x04, 0x43, 0x6f, 0x64, 0x65,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x12, 0x2e, 0x70, 0x62, 0x2e, 0x4c, 0x6f, 0x67, 0x69,
+	0x6e, 0x43, 0x6f, 0x64, 0x65, 0x2e, 0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x43, 0x6f, 0x64, 0x65,
+	0x22, 0x47, 0x0a, 0x15, 0x4c, 0x69, 0x61, 0x6e, 0x6d, 0x65, 0x6e, 0x67, 0x45, 0x6e, 0x74, 0x65,
+	0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2e, 0x0a, 0x04, 0x43, 0x6f, 0x64,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x1a, 0x2e, 0x70, 0x62, 0x2e, 0x4c, 0x69, 0x61,
+	0x6e, 0x6d, 0x65, 0x6e, 0x67, 0x45, 0x6e, 0x74, 0x65, 0x72, 0x43, 0x6f, 0x64, 0x65, 0x2e, 0x43,
+	0x6f, 0x64, 0x65, 0x52, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x22, 0x26, 0x0a, 0x12, 0x4c, 0x69, 0x61,
+	0x6e, 0x6d, 0x65, 0x6e, 0x67, 0x43, 0x68, 0x61, 0x74, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x71, 0x12,
+	0x10, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x4d, 0x73,
+	0x67, 0x22, 0x75, 0x0a, 0x16, 0x4c, 0x69, 0x61, 0x6e, 0x6d, 0x65, 0x6e, 0x67, 0x43, 0x68, 0x61,
+	0x74, 0x53, 0x65, 0x6e, 0x64, 0x4d, 0x73, 0x67, 0x52, 0x65, 0x73, 0x12, 0x2d, 0x0a, 0x04, 0x43,
+	0x6f, 0x64, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x19, 0x2e, 0x70, 0x62, 0x2e, 0x4c,
+	0x69, 0x61, 0x6e, 0x6d, 0x65, 0x6e, 0x67, 0x43, 0x68, 0x61, 0x74, 0x43, 0x6f, 0x64, 0x65, 0x2e,
+	0x43, 0x6f, 0x64, 0x65, 0x52, 0x04, 0x43, 0x6f, 0x64, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x4d, 0x73,
+	0x67, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x1a, 0x0a, 0x08,
+	0x55, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x55, 0x73, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x2a, 0x3b, 0x0a, 0x05, 0x52, 0x6f, 0x75, 0x74,
+	0x65, 0x12, 0x09, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x10, 0x00, 0x12, 0x15, 0x0a, 0x11,
+	0x4c, 0x69, 0x61, 0x6e, 0x6d, 0x65, 0x6e, 0x74, 0x43, 0x68, 0x61, 0x74, 0x45, 0x6e, 0x74, 0x65,
+	0x72, 0x10, 0x01, 0x12, 0x10, 0x0a, 0x0c, 0x4c, 0x69, 0x61, 0x6e, 0x6d, 0x65, 0x6e, 0x67, 0x43,
+	0x68, 0x61, 0x74, 0x10, 0x02, 0x42, 0x06, 0x5a, 0x04, 0x2e, 0x2f, 0x70, 0x62, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -598,29 +627,31 @@ func file_game_proto_rawDescGZIP() []byte {
 	return file_game_proto_rawDescData
 }
 
-var file_game_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_game_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_game_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_game_proto_goTypes = []interface{}{
-	(Route)(0),               // 0: pb.Route
-	(LoginCode_Code)(0),      // 1: pb.LoginCode.Code
-	(CreateRoomCode_Code)(0), // 2: pb.CreateRoomCode.Code
-	(*LoginCode)(nil),        // 3: pb.LoginCode
-	(*LoginReq)(nil),         // 4: pb.LoginReq
-	(*LoginRes)(nil),         // 5: pb.LoginRes
-	(*CreateRoomCode)(nil),   // 6: pb.CreateRoomCode
-	(*CreateRoomReq)(nil),    // 7: pb.CreateRoomReq
-	(*CreateRoomRes)(nil),    // 8: pb.CreateRoomRes
-	(*SendMsgReq)(nil),       // 9: pb.SendMsgReq
-	(*SendMsgRes)(nil),       // 10: pb.SendMsgRes
+	(Route)(0),                     // 0: pb.Route
+	(LoginCode_Code)(0),            // 1: pb.LoginCode.Code
+	(LianmengEnterCode_Code)(0),    // 2: pb.LianmengEnterCode.Code
+	(LianmengChatCode_Code)(0),     // 3: pb.LianmengChatCode.Code
+	(*LoginCode)(nil),              // 4: pb.LoginCode
+	(*LianmengEnterCode)(nil),      // 5: pb.LianmengEnterCode
+	(*LianmengChatCode)(nil),       // 6: pb.LianmengChatCode
+	(*LoginReq)(nil),               // 7: pb.LoginReq
+	(*LoginRes)(nil),               // 8: pb.LoginRes
+	(*LianmengEnterResponse)(nil),  // 9: pb.LianmengEnterResponse
+	(*LianmengChatMsgReq)(nil),     // 10: pb.LianmengChatMsgReq
+	(*LianmengChatSendMsgRes)(nil), // 11: pb.LianmengChatSendMsgRes
 }
 var file_game_proto_depIdxs = []int32{
 	1, // 0: pb.LoginRes.Code:type_name -> pb.LoginCode.Code
-	2, // 1: pb.CreateRoomRes.Code:type_name -> pb.CreateRoomCode.Code
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	2, // 1: pb.LianmengEnterResponse.Code:type_name -> pb.LianmengEnterCode.Code
+	3, // 2: pb.LianmengChatSendMsgRes.Code:type_name -> pb.LianmengChatCode.Code
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_game_proto_init() }
@@ -642,7 +673,7 @@ func file_game_proto_init() {
 			}
 		}
 		file_game_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LoginReq); i {
+			switch v := v.(*LianmengEnterCode); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -654,7 +685,7 @@ func file_game_proto_init() {
 			}
 		}
 		file_game_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*LoginRes); i {
+			switch v := v.(*LianmengChatCode); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -666,7 +697,7 @@ func file_game_proto_init() {
 			}
 		}
 		file_game_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateRoomCode); i {
+			switch v := v.(*LoginReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -678,7 +709,7 @@ func file_game_proto_init() {
 			}
 		}
 		file_game_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateRoomReq); i {
+			switch v := v.(*LoginRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -690,7 +721,7 @@ func file_game_proto_init() {
 			}
 		}
 		file_game_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateRoomRes); i {
+			switch v := v.(*LianmengEnterResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -702,7 +733,7 @@ func file_game_proto_init() {
 			}
 		}
 		file_game_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SendMsgReq); i {
+			switch v := v.(*LianmengChatMsgReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -714,7 +745,7 @@ func file_game_proto_init() {
 			}
 		}
 		file_game_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SendMsgRes); i {
+			switch v := v.(*LianmengChatSendMsgRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -731,7 +762,7 @@ func file_game_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_game_proto_rawDesc,
-			NumEnums:      3,
+			NumEnums:      4,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,

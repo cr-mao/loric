@@ -9,7 +9,6 @@ import (
 	"github.com/cr-mao/loric/component"
 	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/registry"
-	"github.com/cr-mao/loric/sugar"
 	"github.com/cr-mao/loric/transport/grpc"
 )
 
@@ -24,7 +23,7 @@ type Node struct {
 	proxy     *Proxy
 	instance  *registry.ServiceInstance
 	rpcServer *grpc.Server
-	fnChan    chan func()
+	//fnChan    chan func()
 }
 
 func NewNode(opts ...Option) *Node {
@@ -37,7 +36,7 @@ func NewNode(opts ...Option) *Node {
 	n.events = newEvents(n)
 	n.router = newRouter(n)
 	n.proxy = newProxy(n)
-	n.fnChan = make(chan func(), 4096)
+	//n.fnChan = make(chan func(), 4096)
 	n.ctx, n.cancel = context.WithCancel(o.ctx)
 
 	return n
@@ -81,7 +80,7 @@ func (n *Node) Start() {
 
 	n.proxy.watch(n.ctx)
 
-	go n.dispatch()
+	//go n.dispatch()
 
 	n.debugPrint()
 }
@@ -90,7 +89,7 @@ func (n *Node) Start() {
 func (n *Node) Destroy() {
 	n.deregisterServiceInstance()
 	n.stopRPCServer()
-	close(n.fnChan)
+	//close(n.fnChan)
 	n.cancel()
 }
 
@@ -99,18 +98,18 @@ func (n *Node) Proxy() *Proxy {
 	return n.proxy
 }
 
-// 分发处理消息
-func (n *Node) dispatch() {
-	for {
-		select {
-		case handle, ok := <-n.fnChan:
-			if !ok {
-				return
-			}
-			sugar.SafeGo(handle)
-		}
-	}
-}
+// 分发处理消息, 这个可以i干了
+//func (n *Node) dispatch() {
+//	for {
+//		select {
+//		case handle, ok := <-n.fnChan:
+//			if !ok {
+//				return
+//			}
+//			sugar.SafeGo(handle)
+//		}
+//	}
+//}
 
 // 启动RPC服务器
 func (n *Node) startRPCServer() {

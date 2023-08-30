@@ -8,12 +8,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/cr-mao/loric/encoding/proto"
-	"github.com/cr-mao/loric/example/internal/pb"
 	"sync"
 	"sync/atomic"
 	"time"
 
+	"github.com/cr-mao/loric/encoding/proto"
+	"github.com/cr-mao/loric/example/internal/pb"
 	"github.com/cr-mao/loric/network"
 	"github.com/cr-mao/loric/network/tcp"
 	"github.com/cr-mao/loric/packet"

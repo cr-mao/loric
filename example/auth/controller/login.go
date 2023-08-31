@@ -38,14 +38,13 @@ func (r *LoginController) Login(ctx *node.Context) {
 	userInfo, ok := global.UserData.UserMap.Load(req.Token)
 	var userRow *global.User
 	if !ok {
-		atomic.AddInt64(&global.UserId, 1)
-		fmt.Println(global.UserId)
+		newUserId := atomic.AddInt64(&global.UserId, 1)
 		userName, _ := sugar.UUID()
 		userName = userName[0:6]
 		userRow = &global.User{
-			UserId:   global.UserId,
+			UserId:   newUserId,
 			UserName: userName,
-			LiMengId: global.UserId % 2, // 0,1
+			LiMengId: newUserId % 2, // 0,1
 		}
 		global.UserData.UserMap.Store(req.Token, userRow)
 	} else {
@@ -81,8 +80,8 @@ func (r *LoginController) Login(ctx *node.Context) {
 	if bandNodeId == "" {
 		bandNodeId = nodes[0]
 	}
-	fmt.Println(bandNodeId)
-	fmt.Println(userRow.UserId)
+	fmt.Println("bind_node_id:", bandNodeId)
+	fmt.Println("user_id:", userRow.UserId)
 	err = ctx.Proxy.BindNode(ctx.Context(), userRow.UserId, bandNodeId)
 	if err != nil {
 		log.Errorf("login bind node err:%+v", err)

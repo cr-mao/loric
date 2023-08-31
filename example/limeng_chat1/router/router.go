@@ -31,5 +31,6 @@ func (r *Router) Init() {
 	// 监听连接断开
 	r.proxy.Events().AddEventHandler(cluster.Disconnect, eventController.Disconnect)
 	// 创建路由
+	r.proxy.Router().AddRouteHandler(int32(pb.Route_LianmentChatEnter), true, msgController.Enter)
 	r.proxy.Router().AddRouteHandler(int32(pb.Route_LianmengChat), true, msgController.MsgHandle)
 }

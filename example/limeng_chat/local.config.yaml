@@ -52,7 +52,6 @@ node:
       addr: 127.0.0.1:14003
     client:
       poolSize: 10
-
 redis:
   # redis配置
   redis_host: "127.0.0.1"
@@ -75,21 +74,6 @@ registry:
     retryTimes: 3
     # 重试间隔
     retryInterval: 10
-
-network:
-  tcp:
-    server:
-      addr: "0.0.0.0:3553"
-      maxConnNum: 30000
-      heartbeatInterval: 10
-      # 建议 网关服false
-      handlerMsgAsync: false
-      # 是否发心跳给客户端 , 建议 网关服关闭
-      serverHeatSend: true
-      # tcp包 最大长度 1mb
-      maxMsgSize: 1024
-      # 每秒最多接收单客户端单包数量
-      oneSecondMaxMsgNum: 30
 
 locate:
   redis:

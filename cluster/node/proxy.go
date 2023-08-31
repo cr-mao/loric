@@ -2,7 +2,6 @@ package node
 
 import (
 	"context"
-	"github.com/cr-mao/loric/sugar/slice"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -17,6 +16,7 @@ import (
 	"github.com/cr-mao/loric/packet"
 	"github.com/cr-mao/loric/registry"
 	"github.com/cr-mao/loric/session"
+	"github.com/cr-mao/loric/sugar/slice"
 )
 
 type Proxy struct {

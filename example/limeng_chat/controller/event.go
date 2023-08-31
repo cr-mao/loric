@@ -8,10 +8,11 @@ package controller
 
 import (
 	"context"
+	"time"
+
 	"github.com/cr-mao/loric/cluster/node"
 	"github.com/cr-mao/loric/example/limeng_chat/manager"
 	"github.com/cr-mao/loric/log"
-	"time"
 )
 
 type EventController struct{}

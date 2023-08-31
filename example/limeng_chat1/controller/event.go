@@ -8,12 +8,18 @@ package controller
 
 import (
 	"context"
-	"github.com/cr-mao/loric/cluster/node"
-	"github.com/cr-mao/loric/log"
 	"time"
+
+	"github.com/cr-mao/loric/cluster/node"
+	"github.com/cr-mao/loric/example/limeng_chat/manager"
+	"github.com/cr-mao/loric/log"
 )
 
 type EventController struct{}
+
+func getLianmengId(userId int64) int64 {
+	return userId % 2
+}
 
 // 重新连接
 func (r *EventController) Reconnect(evt *node.Event) {
@@ -29,4 +35,8 @@ func (r *EventController) Disconnect(evt *node.Event) {
 	if err != nil {
 		log.Errorf("event disconnect err %v", err)
 	}
+	manager.GetManager().DelUser(&manager.User{
+		UserId:     evt.UID,
+		LianmengId: getLianmengId(evt.UID),
+	})
 }

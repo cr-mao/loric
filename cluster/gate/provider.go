@@ -2,6 +2,7 @@ package gate
 
 import (
 	"context"
+
 	"github.com/cr-mao/loric/cluster"
 	"github.com/cr-mao/loric/errors"
 	"github.com/cr-mao/loric/packet"

@@ -8,6 +8,7 @@ package controller
 
 import (
 	"fmt"
+
 	"github.com/cr-mao/loric/cluster/node"
 	"github.com/cr-mao/loric/example/internal/pb"
 	"github.com/cr-mao/loric/example/limeng_chat/manager"

@@ -108,6 +108,7 @@ func (p *proxy) trigger2(ctx context.Context, args *cluster.TriggerArgs) error {
 		prev = nid
 
 		if ep, err = p.nodeDispatcher.FindEndpoint(nid); err != nil {
+			// 这个不太可能出现，
 			if args.Event == cluster.Disconnect && err == dispatcher.ErrNotFoundEndpoint {
 				return p.doTrigger(ctx, args)
 			}

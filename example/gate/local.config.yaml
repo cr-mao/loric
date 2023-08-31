@@ -100,7 +100,7 @@ registry:
 locate:
   redis:
     addrs: ["127.0.0.1:6379"]
-    db: 15
+    db: 15      # 和业务缓存要分开， 可能关服的时候要清空.......
     maxRetries: 3
     username: ""
     password: ""

@@ -5,10 +5,9 @@
 
 ### 1.介绍
 
-loric 是一款基于golang的分布式游戏服务器框架
+loric 是一款基于golang的分布式游戏服务器框架 （目前处于研发中)
 
 ![](doc/gamestruct.png)
-
 
 
 ### 2.功能
@@ -55,9 +54,9 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
 
 
-### 框架说明文档
+### 框架相关文档
 
-[框架说明文档](doc/README.md)
+[框架相关文档](doc/README.md)
 
 
 ### 参考

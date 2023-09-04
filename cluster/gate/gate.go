@@ -69,7 +69,7 @@ func (g *Gate) Start() {
 
 	g.registerServiceInstance()
 
-	// 启动监听定位器和node服务发现n
+	// 启动监听定位器和node服务发现
 	g.proxy.watch(g.ctx)
 
 	g.debugPrint()
@@ -174,12 +174,13 @@ func (g *Gate) registerServiceInstance() {
 		Alias:    g.opts.name,
 		State:    cluster.Work,
 		Endpoint: g.rpcServer.Endpoint().String(),
+		Weight:   g.opts.weight,
 	}
 	ctx, cancel := context.WithTimeout(g.ctx, 10*time.Second)
+	defer cancel()
 	err := g.opts.registry.Register(ctx, g.instance)
-	cancel()
 	if err != nil {
-		log.Fatalf("register dispatcher instance failed: %v", err)
+		log.Fatalf("register instance failed: %v", err)
 	}
 }
 

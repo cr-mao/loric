@@ -80,8 +80,6 @@ func (n *Node) Start() {
 
 	n.proxy.watch(n.ctx)
 
-	//go n.dispatch()
-
 	n.debugPrint()
 }
 
@@ -89,7 +87,6 @@ func (n *Node) Start() {
 func (n *Node) Destroy() {
 	n.deregisterServiceInstance()
 	n.stopRPCServer()
-	//close(n.fnChan)
 	n.cancel()
 }
 
@@ -97,19 +94,6 @@ func (n *Node) Destroy() {
 func (n *Node) Proxy() *Proxy {
 	return n.proxy
 }
-
-// 分发处理消息, 这个可以i干了
-//func (n *Node) dispatch() {
-//	for {
-//		select {
-//		case handle, ok := <-n.fnChan:
-//			if !ok {
-//				return
-//			}
-//			sugar.SafeGo(handle)
-//		}
-//	}
-//}
 
 // 启动RPC服务器
 func (n *Node) startRPCServer() {
@@ -158,6 +142,7 @@ func (n *Node) registerServiceInstance() {
 		Routes:   routes,
 		Events:   events,
 		Endpoint: n.rpcServer.Endpoint().String(),
+		Weight:   n.opts.weight,
 	}
 
 	ctx, cancel := context.WithTimeout(n.ctx, 10*time.Second)

@@ -22,6 +22,7 @@ type options struct {
 	locator     locate.Locator    // 用户定位器
 	registry    registry.Registry // 服务注册器
 	transporter *Transport        // 消息传输器
+	weight      int               //服务权重
 }
 
 func defaultOptions() *options {
@@ -30,6 +31,7 @@ func defaultOptions() *options {
 		name:    defaultName,
 		codec:   encoding.Invoke(defaultCodec),
 		timeout: defaultTimeout,
+		weight:  defaultWeight,
 	}
 
 	if id := conf.GetString(defaultIDKey, ""); id != "" {
@@ -50,6 +52,9 @@ func defaultOptions() *options {
 		opts.timeout = time.Duration(timeout) * time.Second
 	}
 
+	if weight := conf.GetInt(defaultWeightKey, defaultWeight); weight > 0 {
+		opts.weight = weight
+	}
 	return opts
 }
 
@@ -91,4 +96,9 @@ func WithRegistry(r registry.Registry) Option {
 // WithTransporter 设置消息传输器
 func WithTransporter(transporter *Transport) Option {
 	return func(o *options) { o.transporter = transporter }
+}
+
+// WithWeight 设置服务权重
+func WithWeight(weight int) Option {
+	return func(o *options) { o.weight = weight }
 }

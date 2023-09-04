@@ -25,7 +25,7 @@ type proxy struct {
 func newProxy(gate *Gate) *proxy {
 	return &proxy{
 		gate:           gate,
-		nodeDispatcher: dispatcher.NewDispatcher(dispatcher.RoundRobin),
+		nodeDispatcher: dispatcher.NewDispatcher(dispatcher.NotWeightZeroRoundRobin),
 	}
 }
 
@@ -49,7 +49,7 @@ func (p *proxy) unbindGate(ctx context.Context, cid, uid int64) error {
 	return err
 }
 
-// 触发事件
+// 触发事件 ,触发事件 目前也是要走绑定node的才做处理。
 func (p *proxy) trigger(ctx context.Context, event int32, cid, uid int64) {
 	if err := p.trigger2(ctx, &cluster.TriggerArgs{
 		Event: event,
@@ -62,23 +62,23 @@ func (p *proxy) trigger(ctx context.Context, event int32, cid, uid int64) {
 
 // Trigger 触发事件
 func (p *proxy) trigger2(ctx context.Context, args *cluster.TriggerArgs) error {
-	// switch 这块其实都不会走，先留着
-	switch args.Event {
-	// 这里不会走到
-	case cluster.Connect:
-		return p.doTrigger(ctx, args)
-	case cluster.Disconnect:
-		// 限定了 必须有用户id才触发
-		if args.UID == 0 {
-			return p.doTrigger(ctx, args)
-		}
-		// 绑定网关
-	case cluster.Reconnect:
-		if args.UID == 0 {
-			return ErrInvalidArgument
-		}
-	}
-
+	//// switch 这块其实都不会走，先留着
+	//switch args.Event {
+	////// 这里不会走到
+	//case cluster.Connect:
+	//	return p.doTrigger(ctx, args)
+	//case cluster.Disconnect:
+	//	// 限定了 必须有用户id才触发
+	//	if args.UID == 0 {
+	//		return p.doTrigger(ctx, args)
+	//	}
+	//	// 绑定网关
+	//case cluster.Reconnect:
+	//	if args.UID == 0 {
+	//		return ErrInvalidArgument
+	//	}
+	//}
+	// Disconnect,Reconnect 这会有这2个事件
 	var (
 		err       error
 		nid       string
@@ -93,11 +93,10 @@ func (p *proxy) trigger2(ctx context.Context, args *cluster.TriggerArgs) error {
 			UID:   args.UID,
 		}
 	)
-
 	for i := 0; i < 2; i++ {
 		if nid, err = p.LocateNode(ctx, args.UID); err != nil {
 			//if args.Event == cluster.Disconnect && err == ErrNotFoundUserSource {
-			//	//todo 这个case 好想没用，用户都不知道再哪台机器上....
+			//	这个case没用，用户都不知道再哪台机器上....
 			//	return p.doTrigger(ctx, args)
 			//}
 			return err
@@ -108,10 +107,11 @@ func (p *proxy) trigger2(ctx context.Context, args *cluster.TriggerArgs) error {
 		prev = nid
 
 		if ep, err = p.nodeDispatcher.FindEndpoint(nid); err != nil {
-			// 这个不太可能出现，
-			if args.Event == cluster.Disconnect && err == dispatcher.ErrNotFoundEndpoint {
-				return p.doTrigger(ctx, args)
-			}
+			// nid  实例被移除了
+
+			//if args.Event == cluster.Disconnect && err == dispatcher.ErrNotFoundEndpoint {
+			//	return p.doTrigger(ctx, args)
+			//}
 			return err
 		}
 		client, err = p.gate.opts.transporter.NewNodeClient(ep)
@@ -154,38 +154,37 @@ func (p *proxy) LocateNode(ctx context.Context, uid int64) (string, error) {
 }
 
 // 触发事件
-func (p *proxy) doTrigger(ctx context.Context, args *cluster.TriggerArgs) error {
-	event, err := p.nodeDispatcher.FindEvent(args.Event)
-	if err != nil {
-		if err == dispatcher.ErrNotFoundEvent {
-			return nil
-		}
-
-		return err
-	}
-
-	ep, err := event.FindEndpoint()
-	if err != nil {
-		if err == dispatcher.ErrNotFoundEndpoint {
-			return nil
-		}
-
-		return err
-	}
-
-	client, err := p.gate.opts.transporter.NewNodeClient(ep)
-	if err != nil {
-		return err
-	}
-
-	_, err = client.Trigger(ctx, &cluster.TriggerArgs{
-		Event: args.Event,
-		GID:   p.gate.opts.id,
-		CID:   args.CID,
-		UID:   args.UID,
-	})
-	return err
-}
+//func (p *proxy) doTrigger(ctx context.Context, args *cluster.TriggerArgs) error {
+//	event, err := p.nodeDispatcher.FindEvent(args.Event)
+//	if err != nil {
+//		if err == dispatcher.ErrNotFoundEvent {
+//			return nil
+//		}
+//		return err
+//	}
+//
+//	ep, err := event.FindEndpoint()
+//	if err != nil {
+//		if err == dispatcher.ErrNotFoundEndpoint {
+//			return nil
+//		}
+//
+//		return err
+//	}
+//
+//	client, err := p.gate.opts.transporter.NewNodeClient(ep)
+//	if err != nil {
+//		return err
+//	}
+//
+//	_, err = client.Trigger(ctx, &cluster.TriggerArgs{
+//		Event: args.Event,
+//		GID:   p.gate.opts.id,
+//		CID:   args.CID,
+//		UID:   args.UID,
+//	})
+//	return err
+//}
 
 // 投递消息给节点
 func (p *proxy) deliver(ctx context.Context, cid, uid int64, data []byte) {
@@ -202,18 +201,18 @@ func (p *proxy) deliver(ctx context.Context, cid, uid int64, data []byte) {
 		Message: message,
 	}
 
-	_, err = p.doNodeRPC(ctx, message.Route, uid, func(ctx context.Context, client *NodeGrpcClient) (bool, interface{}, error) {
-		miss, errDelver := client.Deliver(ctx, arguments)
-		return miss, nil, errDelver
-	})
+	err = p.doNodeRPC2(ctx, message.Route, uid, arguments)
+	//_, err = p.doNodeRPC(ctx, message.Route, uid, func(ctx context.Context, client *NodeGrpcClient) (bool, interface{}, error) {
+	//	miss, errDelver := client.Deliver(ctx, arguments)
+	//	return miss, nil, errDelver
+	//})
 	if err != nil {
 		log.Errorf("deliver message failed: %v", err)
 		return
 	}
 }
 
-// 执行节点RPC调用, todo 简化， 这代码不够好阅读
-func (p *proxy) doNodeRPC(ctx context.Context, routeID int32, uid int64, fn func(ctx context.Context, client *NodeGrpcClient) (bool, interface{}, error)) (interface{}, error) {
+func (p *proxy) doNodeRPC2(ctx context.Context, routeID int32, uid int64, arguments *cluster.DeliverArgs) error {
 	var (
 		err       error
 		nid       string
@@ -222,45 +221,92 @@ func (p *proxy) doNodeRPC(ctx context.Context, routeID int32, uid int64, fn func
 		route     *dispatcher.Route
 		ep        *endpoint.Endpoint
 		continued bool
-		reply     interface{}
 	)
 
 	if route, err = p.nodeDispatcher.FindRoute(routeID); err != nil {
-		return nil, err
+		return err
 	}
 
 	for i := 0; i < 2; i++ {
 		if route.Stateful() {
 			if nid, err = p.LocateNode(ctx, uid); err != nil {
-				return nil, err
+				return err
 			}
 			if nid == prev {
-				return reply, err
+				return err
 			}
 			prev = nid
 		}
 
 		ep, err = route.FindEndpoint(nid)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		client, err = p.gate.opts.transporter.NewNodeClient(ep)
 		if err != nil {
-			return nil, err
+			return err
 		}
-
-		continued, reply, err = fn(ctx, client)
+		continued, err = client.Deliver(ctx, arguments)
 		if continued {
 			p.nodeSource.Delete(uid)
 			continue
 		}
-
 		break
 	}
 
-	return reply, err
+	return err
 }
+
+// 执行节点RPC调用
+//func (p *proxy) doNodeRPC(ctx context.Context, routeID int32, uid int64, fn func(ctx context.Context, client *NodeGrpcClient) (bool, interface{}, error)) (interface{}, error) {
+//	var (
+//		err       error
+//		nid       string
+//		prev      string
+//		client    *NodeGrpcClient
+//		route     *dispatcher.Route
+//		ep        *endpoint.Endpoint
+//		continued bool
+//		reply     interface{}
+//	)
+//
+//	if route, err = p.nodeDispatcher.FindRoute(routeID); err != nil {
+//		return nil, err
+//	}
+//
+//	for i := 0; i < 2; i++ {
+//		if route.Stateful() {
+//			if nid, err = p.LocateNode(ctx, uid); err != nil {
+//				return nil, err
+//			}
+//			if nid == prev {
+//				return reply, err
+//			}
+//			prev = nid
+//		}
+//
+//		ep, err = route.FindEndpoint(nid)
+//		if err != nil {
+//			return nil, err
+//		}
+//
+//		client, err = p.gate.opts.transporter.NewNodeClient(ep)
+//		if err != nil {
+//			return nil, err
+//		}
+//
+//		continued, reply, err = fn(ctx, client)
+//		if continued {
+//			p.nodeSource.Delete(uid)
+//			continue
+//		}
+//
+//		break
+//	}
+//
+//	return reply, err
+//}
 
 // 启动监听
 func (p *proxy) watch(ctx context.Context) {

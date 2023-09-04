@@ -16,6 +16,7 @@ type Option func(o *options)
 type options struct {
 	id          string            // 实例ID
 	name        string            // 实例名称
+	weight      int               // 权重
 	authTimeOut time.Duration     // 认证最长时间，默认5秒，连上来的第一个包必须是auth包
 	ctx         context.Context   // 上下文
 	server      network.Server    // 网关服务器
@@ -31,6 +32,7 @@ func defaultOptions() *options {
 		name:        defaultName,
 		timeout:     defaultTimeout,
 		authTimeOut: defaultAuthTimeout,
+		weight:      10,
 	}
 
 	if id := conf.GetString(defaultIDKey); id != "" {
@@ -49,6 +51,10 @@ func defaultOptions() *options {
 
 	if authTimeout := conf.GetInt64(defaultAuthTimeoutKey); authTimeout > 0 {
 		opts.timeout = time.Duration(authTimeout) * time.Second
+	}
+
+	if weight := conf.GetInt(defaultWeightKey); weight > 0 {
+		opts.weight = weight
 	}
 
 	return opts
@@ -96,4 +102,8 @@ func WithTransport(t *Transport) Option {
 
 func WithAuthTimeOut(t int64) Option {
 	return func(o *options) { o.authTimeOut = time.Duration(t) * time.Second }
+}
+
+func WithWeight(weight int) Option {
+	return func(o *options) { o.weight = weight }
 }

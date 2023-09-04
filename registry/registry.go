@@ -46,6 +46,8 @@ type ServiceInstance struct {
 	Routes []Route `json:"routes"`
 	// 服务器实体暴露端口
 	Endpoint string `json:"endpoint"`
+	// 服务权重， 权重负载均衡，可以设置为0 ，则表示新的连接 不会请求过去，也可以用来做热更用。
+	Weight int `json:"weight"`
 }
 
 type Route struct {

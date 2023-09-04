@@ -29,10 +29,9 @@ type Proxy struct {
 
 func newProxy(node *Node) *Proxy {
 	return &Proxy{
-		node: node,
-		//todo  先写死策略
-		nodeDispatcher: dispatcher.NewDispatcher(dispatcher.RoundRobin),
-		gateDispatcher: dispatcher.NewDispatcher(dispatcher.RoundRobin),
+		node:           node,
+		nodeDispatcher: dispatcher.NewDispatcher(dispatcher.NotWeightZeroRoundRobin),
+		gateDispatcher: dispatcher.NewDispatcher(dispatcher.NotWeightZeroRoundRobin),
 	}
 }
 

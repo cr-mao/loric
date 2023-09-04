@@ -38,7 +38,7 @@ func onConnect(proxy client.Proxy) {
 	log.Infof("connection is opened")
 
 	err := proxy.Push(0, int32(pb.Route_Login), &pb.LoginReq{
-		Token: "cr-mao6",
+		Token: "cr-mao7",
 	})
 	if err != nil {
 		log.Errorf("login message failed: %v", err)
@@ -48,7 +48,7 @@ func onConnect(proxy client.Proxy) {
 func onReconnect(proxy client.Proxy) {
 	log.Infof("connection is reopened")
 	err := proxy.Push(0, int32(pb.Route_Login), &pb.LoginReq{
-		Token: "cr-mao6",
+		Token: "cr-mao7",
 	})
 	if err != nil {
 		log.Errorf("push login message failed: %v", err)

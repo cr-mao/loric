@@ -18,9 +18,10 @@ var (
 type BalanceStrategy string
 
 const (
-	Random     BalanceStrategy = "random" // 随机
-	RoundRobin BalanceStrategy = "rr"     // 轮询
-	//WeightRoundRobin BalanceStrategy = "wrr"    // 加权轮询
+	Random                  BalanceStrategy = "random" // 随机
+	RoundRobin              BalanceStrategy = "rr"     // 轮询
+	WeightRoundRobin        BalanceStrategy = "wrr"    // 加权轮询
+	NotWeightZeroRoundRobin BalanceStrategy = "nzrr"   // 非权重0的 轮询
 )
 
 type Dispatcher struct {
@@ -99,7 +100,6 @@ func (d *Dispatcher) ReplaceServices(services ...*registry.ServiceInstance) {
 				service.ID, service.Kind, service.Name, service.Endpoint, err)
 			continue
 		}
-
 		endpoints[service.ID] = ep
 
 		for _, item := range service.Routes {
@@ -108,7 +108,7 @@ func (d *Dispatcher) ReplaceServices(services ...*registry.ServiceInstance) {
 				route = newRoute(d, item.ID, item.Stateful)
 				routes[item.ID] = route
 			}
-			route.addEndpoint(service.ID, ep)
+			route.addEndpoint(service.ID, ep, service.Weight)
 		}
 
 		for _, evt := range service.Events {
@@ -117,7 +117,7 @@ func (d *Dispatcher) ReplaceServices(services ...*registry.ServiceInstance) {
 				event = newEvent(d, evt)
 				events[evt] = event
 			}
-			event.addEndpoint(service.ID, ep)
+			event.addEndpoint(service.ID, ep, service.Weight)
 		}
 	}
 

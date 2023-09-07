@@ -1,9 +1,10 @@
 package dispatcher
 
 import (
+	"math/rand"
+
 	"github.com/cr-mao/loric/internal/endpoint"
 	"github.com/cr-mao/loric/log"
-	"math/rand"
 )
 
 type serviceEndpoint struct {
@@ -84,7 +85,7 @@ func (a *abstract) noZeroWeightRobinDispatch() (*endpoint.Endpoint, error) {
 	return a.effectiveEndpointArr[index].endpoint, nil
 }
 
-// 随机分配
+//nolint 随机分配
 func (a *abstract) randomDispatch() (*endpoint.Endpoint, error) {
 	if len(a.endpointArr) == 0 {
 		return nil, ErrNotFoundEndpoint
@@ -93,7 +94,7 @@ func (a *abstract) randomDispatch() (*endpoint.Endpoint, error) {
 	return a.endpointArr[index].endpoint, nil
 }
 
-// 轮询分配
+//nolint 轮询分配
 func (a *abstract) roundRobinDispatch() (*endpoint.Endpoint, error) {
 	if len(a.endpointArr) == 0 {
 		return nil, ErrNotFoundEndpoint

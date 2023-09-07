@@ -2,11 +2,13 @@ package etcd
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
 
+	"github.com/cr-mao/loric/log"
 	"github.com/cr-mao/loric/registry"
 )
 
@@ -119,6 +121,18 @@ func (r *registrar) put(ctx context.Context, key, value string) (clientv3.LeaseI
 	return res.ID, nil
 }
 
+func (r *registrar) getByKey(ctx context.Context, key string) (string, error) {
+	var getResp *clientv3.GetResponse
+	getResp, err := r.kv.Get(ctx, key)
+	if err != nil {
+		return "", err
+	}
+	if len(getResp.Kvs) >= 1 {
+		return string(getResp.Kvs[0].Value), nil
+	}
+	return "", errors.New("instance not found")
+}
+
 // 心跳
 func (r *registrar) heartbeat(ctx context.Context, leaseID clientv3.LeaseID, key, value string) {
 	chKA, err := r.lease.KeepAlive(ctx, leaseID)
@@ -127,12 +141,18 @@ func (r *registrar) heartbeat(ctx context.Context, leaseID clientv3.LeaseID, key
 	for {
 		if !ok {
 			for i := 0; i < r.registry.opts.retryTimes; i++ {
+				log.Warn("retry keepalive")
 				if ctx.Err() != nil {
 					return
 				}
-
 				pctx, pcancel := context.WithTimeout(ctx, r.registry.opts.timeout)
-				leaseID, err = r.put(pctx, key, value)
+				// 重新取一遍，万一失败，则取第一次的value了。
+				newValue, kerr := r.getByKey(ctx, key)
+				if kerr != nil {
+					newValue = value
+				}
+				// 管理服，把权重给改了。 如果这里keepalive 失败 ，那么会写入 老的值（ 按理可能性不大））
+				leaseID, err = r.put(pctx, key, newValue)
 				pcancel()
 				if err != nil {
 					time.Sleep(r.registry.opts.retryInterval)
@@ -144,11 +164,9 @@ func (r *registrar) heartbeat(ctx context.Context, leaseID clientv3.LeaseID, key
 					time.Sleep(r.registry.opts.retryInterval)
 					continue
 				}
-
 				ok = true
 				break
 			}
-
 			if !ok {
 				return
 			}

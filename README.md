@@ -1,6 +1,7 @@
 # loric
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Go Reference](https://pkg.go.dev/badge/github.com/cr-mao/loric.svg)](https://pkg.go.dev/github.com/cr-mao/loric)
 
 
 ### 1.介绍

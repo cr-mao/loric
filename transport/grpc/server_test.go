@@ -16,7 +16,7 @@ import (
 )
 
 func TestServer(t *testing.T) {
-	s, err := grpc.NewServer("0.0.0.0:12345")
+	s, err := grpc.NewServer("")
 	if err != nil {
 		log.Fatal(err)
 	}

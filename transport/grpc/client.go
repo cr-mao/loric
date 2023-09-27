@@ -87,11 +87,12 @@ func (p *Pool) Get() (*grpc.ClientConn, error) {
 	if conn != nil && p.checkState(conn) == nil {
 		return conn, nil
 	}
+
+	p.Lock()
 	// gc old conn
 	if conn != nil {
 		conn.Close()
 	}
-	p.Lock()
 	defer p.Unlock()
 	// double check, already inited
 	conn = p.conns[idx]

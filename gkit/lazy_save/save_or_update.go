@@ -34,12 +34,14 @@ func SaveOrUpdate(lazySaveObj LazySaveObj) {
 	if nil != currRecord {
 		// 修改最后更新时间
 		currRecord.(*lazySaveRecord).lastUpdateTime = time.Now().UnixMilli()
+		currRecord.(*lazySaveRecord).UpdateNums += 1
 		return
 	}
 
 	newRecord := &lazySaveRecord{
 		objRef:         lazySaveObj,
 		lastUpdateTime: time.Now().UnixMilli(),
+		UpdateNums:     1,
 	}
 
 	lazySaveRecordMap.Store(lazySaveObj.GetLsoId(), newRecord)
@@ -62,8 +64,8 @@ func startSave() {
 
 				currRecord := val.(*lazySaveRecord)
 
-				if nowTime-currRecord.lastUpdateTime < 10000 {
-					// 如果时间差小于 10 秒
+				if nowTime-currRecord.lastUpdateTime < 10000 && currRecord.UpdateNums < 10 {
+					// 如果时间差小于 20 秒
 					// 不进行保存
 					return true
 				}

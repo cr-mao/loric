@@ -2,9 +2,10 @@ package lazy_save_test
 
 import (
 	"fmt"
-	"github.com/cr-mao/loric/gkit/lazy_save"
 	"testing"
 	"time"
+
+	"github.com/cr-mao/loric/gkit/lazy_save"
 )
 
 type User struct {
@@ -48,7 +49,6 @@ INFO msg=执行延迟保存, lsoId = userdata_1
 执行存库操作，可能是异步,当前时间戳: 1690676257
 */
 func TestLazySave(t *testing.T) {
-	t.SkipNow()
 	// 模拟高频场景
 	times := 0
 	fmt.Println("begin", time.Now().Unix())

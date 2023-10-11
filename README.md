@@ -6,7 +6,7 @@
 
 ### 1.介绍
 
-loric 是一款基于golang的分布式游戏服务器框架 （目前处于研发中)
+loric 是一款基于golang的分布式游戏服务器框架 
 
 ![](doc/gamestruct.png)
 

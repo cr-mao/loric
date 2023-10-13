@@ -2,7 +2,7 @@ package async_op
 
 import "sync"
 
-var workerArray = [2048]*worker{}
+var workerArray = [512]*worker{}
 
 // 初始化工人用的锁
 var initWorkerLocker = &sync.Mutex{}

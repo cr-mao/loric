@@ -19,9 +19,10 @@ type Router struct {
 }
 
 type routeEntity struct {
-	route    int32        // 路由
-	stateful bool         // 是否有状态
-	handler  RouteHandler // 路由处理器
+	route       int32        // 路由
+	stateful    bool         // 是否有状态
+	handler     RouteHandler // 路由处理器
+	middlewares []MiddlewareHandler
 }
 
 func newRouter(node *Node) *Router {
@@ -30,24 +31,26 @@ func newRouter(node *Node) *Router {
 		routes: make(map[int32]*routeEntity),
 		ctxPool: sync.Pool{New: func() interface{} {
 			return &Context{
-				ctx:     context.Background(),
-				Proxy:   node.proxy,
-				Request: &Request{node: node, Message: &Message{}},
+				ctx:        context.Background(),
+				Proxy:      node.proxy,
+				Request:    &Request{node: node, Message: &Message{}},
+				Middleware: &Middleware{},
 			}
 		}},
 	}
 }
 
 // AddRouteHandler 添加路由处理器
-func (r *Router) AddRouteHandler(route int32, stateful bool, handler RouteHandler) {
+func (r *Router) AddRouteHandler(route int32, stateful bool, handler RouteHandler, middlewares ...MiddlewareHandler) {
 	if r.node.getState() != cluster.Shut {
 		log.Warnf("the node server is working, can't add route handler")
 		return
 	}
 	r.routes[route] = &routeEntity{
-		route:    route,
-		stateful: stateful,
-		handler:  handler,
+		route:       route,
+		stateful:    stateful,
+		handler:     handler,
+		middlewares: middlewares,
 	}
 	log.Debugf("add route route_id: %d ,stateful:%t --> handler: %s", route, stateful, sugar.NameOfFunction(handler))
 }
@@ -82,12 +85,34 @@ func (r *Router) handle(ctx *Context) {
 		return
 	}
 	if ok {
-		route.handler(ctx)
+		// 这个是先执行完 中间件，然后再执行路由函数....
+		if len(route.middlewares) > 0 {
+			ctx.Middleware.reset(route.middlewares)
+			ctx.Middleware.Next(ctx)
+			if ctx.Middleware.isFinished() {
+				route.handler(ctx)
+			}
+		} else {
+			route.handler(ctx)
+		}
 	} else {
 		r.defaultRouteHandler(ctx)
 	}
 }
 
+// Group 路由组
+func (r *Router) Group(groups ...func(group *RouterGroup)) *RouterGroup {
+	group := &RouterGroup{
+		router:      r,
+		middlewares: make([]MiddlewareHandler, 0),
+	}
+
+	for _, fn := range groups {
+		fn(group)
+	}
+
+	return group
+}
 func (r *Router) deliver(gid, nid string, cid, uid int64, seq, route int32, data interface{}) {
 	ctx := r.ctxPool.Get().(*Context)
 	ctx.Request.GID = gid
@@ -98,4 +123,26 @@ func (r *Router) deliver(gid, nid string, cid, uid int64, seq, route int32, data
 	ctx.Request.Message.Route = route
 	ctx.Request.Message.Data = data
 	r.handle(ctx) // 直接执行
+}
+
+type RouterGroup struct {
+	router      *Router
+	middlewares []MiddlewareHandler
+}
+
+// Middleware 添加中间件
+func (g *RouterGroup) Middleware(middlewares ...MiddlewareHandler) *RouterGroup {
+	g.middlewares = append(g.middlewares, middlewares...)
+
+	return g
+}
+
+// AddRouteHandler 添加路由处理器
+func (g *RouterGroup) AddRouteHandler(route int32, stateful bool, handler RouteHandler, middlewares ...MiddlewareHandler) *RouterGroup {
+	dst := make([]MiddlewareHandler, len(g.middlewares)+len(middlewares))
+	copy(dst, g.middlewares)
+	copy(dst[len(g.middlewares):], middlewares)
+	g.router.AddRouteHandler(route, stateful, handler, dst...)
+
+	return g
 }

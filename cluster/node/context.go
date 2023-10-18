@@ -7,9 +7,10 @@ import (
 )
 
 type Context struct {
-	ctx     context.Context
-	Proxy   *Proxy
-	Request *Request
+	ctx        context.Context
+	Proxy      *Proxy
+	Request    *Request
+	Middleware *Middleware
 }
 
 // Context 获取上线文

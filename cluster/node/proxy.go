@@ -16,7 +16,7 @@ import (
 	"github.com/cr-mao/loric/packet"
 	"github.com/cr-mao/loric/registry"
 	"github.com/cr-mao/loric/session"
-	"github.com/cr-mao/loric/sugar/slice"
+	"github.com/cr-mao/loric/sugar/gslice"
 )
 
 type Proxy struct {
@@ -285,7 +285,7 @@ func (p *Proxy) FetchNodeIdListByRoute(ctx context.Context, routeIds ...int32) (
 	var nodeIds []string
 	for _, nodeInfo := range nodes {
 		for _, route := range nodeInfo.Routes {
-			if slice.InSliceInt32(route.ID, routeIds) {
+			if gslice.InSliceInt32(route.ID, routeIds) {
 				nodeIds = append(nodeIds, nodeInfo.ID)
 				break
 			}

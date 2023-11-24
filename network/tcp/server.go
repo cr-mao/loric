@@ -126,23 +126,23 @@ func (s *server) serve() {
 				return
 			}
 
-			if e, ok := err.(net.Error); ok && e.Timeout() {
-				if tempDelay == 0 {
-					tempDelay = 5 * time.Millisecond
-				} else {
-					tempDelay *= 2
-				}
-				if max := 1 * time.Second; tempDelay > max {
-					tempDelay = max
-				}
-
-				log.Warnf("tcp accept error: %v; retrying in %v", err, tempDelay)
-				time.Sleep(tempDelay)
-				continue
+			//if e, ok := err.(net.Error); ok && e.Timeout() {
+			if tempDelay == 0 {
+				tempDelay = 5 * time.Millisecond
+			} else {
+				tempDelay *= 2
 			}
-			// 应该走不到这里，只有上面2种
-			log.Errorf("tcp accept error: %v", err)
+			if max := 1 * time.Second; tempDelay > max {
+				tempDelay = max
+			}
+
+			log.Warnf("tcp accept error: %v; retrying in %v", err, tempDelay)
+			time.Sleep(tempDelay)
 			continue
+			//}
+			// 应该走不到这里，只有上面2种
+			//log.Errorf("tcp accept error: %v", err)
+			//continue
 			//return
 		}
 

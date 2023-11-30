@@ -14,9 +14,9 @@ loric 是一款基于golang的分布式游戏服务器框架
 ### 2.功能
 
 - 网关：tcp协议的网关服务器
-- 节点通信：grpc
+- 节点通信：grpc 带有连接池，断线自动重连, 和[grpc-conn-pool](https://github.com/cr-mao/grpc-conn-pool)这个实现一致
 - 日志：基于zap
-- 服务发现注册：支持etcd
+- 服务发现注册：支持etcd, 提供配套的etcd管理client
 - 协议：支持protobuf、json
 - 配置: 基于viper
 - 游戏常用技术(见gkit):异步操作 、定时任务及守护任务 、延迟保存、时间轮

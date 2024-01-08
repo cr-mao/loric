@@ -1,4 +1,0 @@
-name: etcd1
-data-dir: ./data
-listen-client-urls: http://127.0.0.1:2379
-etcd_advertise_client_urls: http://0.0.0.0:2379
